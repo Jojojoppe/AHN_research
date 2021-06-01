@@ -1,0 +1,22 @@
+{
+    "configurations": [
+        {
+            "name": "Linux",
+            "includePath": [
+                "${workspaceFolder}/src/**",
+                "/usr/include/**",
+                "/usr/include/c++/11.1.0/**",
+                "/opt/omnetpp/include/**",
+                "/opt/omnetpp/samples/inet4.3/src/**",
+                "/home/joppe/Files/Study/MSc/2020-2021/2B/AHN/veins/src/veins/**"
+            ],
+            "defines": [
+            ],
+            "compilerPath": "/usr/bin/gcc",
+            "cStandard": "c11",
+            "cppStandard": "c++17",
+            "intelliSenseMode": "${default}"
+        }
+    ],
+    "version": 4
+}

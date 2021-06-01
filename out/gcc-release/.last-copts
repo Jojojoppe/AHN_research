@@ -1,0 +1,1 @@
+-O3 -DNDEBUG=1   -MMD -MP -MF .d  -fPIC  -fno-omit-frame-pointer -DHAVE_SWAPCONTEXT -DWITH_MPI -DWITH_QTENV -DWITH_PARSIM -DWITH_NETBUILDER -DWITH_OSG -DOMNETPPLIBS_IMPORT -DINET_IMPORT -DVEINS_IMPORT -I/opt/omnetpp/samples/inet4.3/src -I/home/joppe/Files/Study/MSc/2020-2021/2B/AHN/veins/src -Isrc -I/opt/omnetpp/include

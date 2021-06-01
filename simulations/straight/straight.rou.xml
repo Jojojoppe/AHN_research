@@ -1,0 +1,16 @@
+<routes>
+	<vType acceleration="2.6" deceleration="4.5" guiShape="passenger/sedan" id="personen_auto" length="5.0" maxSpeed="45.0" mminGap="2.5" sigma="0.5" speedFactor="normc(1,0.1,0.2,2)" vClass="passenger"/>
+	
+	<flow id="links0" color="0,1,1"  begin="0" end= "200" probability="0.95" type="personen_auto" departSpeed="max" departLane="0" arrivalLane="0">
+		<route edges="1to2 out"/>
+	</flow>     
+	<flow id="links1" color="0,1,1"  begin="0" end= "200" probability="0.95" type="personen_auto" departSpeed="max" departLane="1" arrivalLane="1">
+		<route edges="1to2 out"/>
+	</flow>     
+	<flow id="links2" color="0,1,1"  begin="0" end= "200" probability="0.95" type="personen_auto" departSpeed="max" departLane="2" arrivalLane="2">
+		<route edges="1to2 out"/>
+	</flow>     
+	<flow id="links3" color="0,1,1"  begin="0" end= "200" probability="0.95" type="personen_auto" departSpeed="max" departLane="3" arrivalLane="3">
+		<route edges="1to2 out"/>
+	</flow>     
+</routes>
