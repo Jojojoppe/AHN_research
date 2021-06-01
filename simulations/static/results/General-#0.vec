@@ -1,8 +1,8 @@
 version 3
-run General-0-20210601-13:23:04-1573943
+run General-0-20210601-17:29:00-2909977
 attr configname General
-attr datetime 20210601-13:23:04
-attr datetimef 20210601-132304
+attr datetime 20210601-17:29:00
+attr datetimef 20210601-172900
 attr experiment General
 attr inifile omnetpp.ini
 attr iterationvars ""
@@ -10,7 +10,7 @@ attr iterationvarsd ""
 attr iterationvarsf ""
 attr measurement ""
 attr network Scenario
-attr processid 1573943
+attr processid 2909977
 attr repetition 0
 attr replication #0
 attr resultdir results
@@ -610,21 +610,6 @@ vector 146 Scenario.node4.wlan[0].radio transmissionState:vector ETV
 attr interpolationmode sample-hold
 attr source transmissionStateChanged
 attr title "Radio transmission state, vector"
-vector 147 Scenario.node4.wlan[0].mac.dcf packetSentToPeer:vector(packetBytes) ETV
-attr interpolationmode none
-attr title "packets sent, vector(packetBytes)"
-vector 148 Scenario.node4.wlan[0].mac.dcf packetSentToPeerMulticast:vector(packetBytes) ETV
-attr interpolationmode none
-attr source ieee80211Multicast(packetSentToPeer)
-attr title "packets sent: multicast, vector(packetBytes)"
-vector 149 Scenario.node4.wlan[0].mac.dcf packetSentToPeerWithoutRetry:vector(packetBytes) ETV
-attr interpolationmode none
-attr source ieee80211NotRetry(packetSentToPeer)
-attr title "packets sent: without retry, vector(packetBytes)"
-vector 150 Scenario.node4.wlan[0].mac.dcf.channelAccess.inProgressFrames queueingTime:vector ETV
-attr interpolationmode none
-attr source queueingTime(packetDequeued)
-attr title "queueing times, vector"
 0	0	0	0
 0	0	0	0
 0	0	0	2
@@ -647,7 +632,6 @@ attr title "queueing times, vector"
 8	0	0	0
 8	0	0	2
 8	149	0.06589999795	3
-8	158	0.06631599795	2
 9	0	0	3
 10	0	0	0
 10	0	0	0
@@ -741,7 +725,6 @@ attr title "queueing times, vector"
 22	92	0.017700345277	3
 22	100	0.018116345277	1
 22	149	0.06589999795	0
-22	158	0.06631599795	1
 23	0	0	0
 23	0	0	0
 23	38	0.014700822432	0
@@ -758,8 +741,6 @@ attr title "queueing times, vector"
 23	147	0.06589999795	0
 23	149	0.06589999795	0
 23	149	0.06589999795	0
-23	158	0.06631599795	0
-23	158	0.06631599795	0
 24	0	0	1
 24	33	0.014699999988	0
 24	42	0.015115999988	1
@@ -980,52 +961,44 @@ attr title "queueing times, vector"
 140	148	0.06589999795	558
 141	148	0.06589999795	0
 142	148	0.06589999795	1
-142	157	0.06631599795	0
 143	148	0.06589999795	12000000
 144	148	0.06589999795	558
 145	148	0.06589999795	1
-145	157	0.06631599795	0
 146	149	0.06589999795	1
 146	150	0.06589999795	2
-146	157	0.06631599795	1
-146	158	0.06631599795	0
-147	157	0.06631599795	558
-148	157	0.06631599795	558
-149	157	0.06631599795	558
-150	157	0.06631599795	0.000416
-vector 151 Scenario.node0.app[0] throughput:vector ETV
+vector 147 Scenario.node0.app[0] throughput:vector ETV
 attr source throughput(packetReceived)
 attr title "throughput, vector"
 attr unit bps
-vector 152 Scenario.node1.app[0] throughput:vector ETV
+vector 148 Scenario.node1.app[0] throughput:vector ETV
 attr source throughput(packetReceived)
 attr title "throughput, vector"
 attr unit bps
-vector 153 Scenario.node2.app[0] throughput:vector ETV
+vector 149 Scenario.node2.app[0] throughput:vector ETV
 attr source throughput(packetReceived)
 attr title "throughput, vector"
 attr unit bps
-vector 154 Scenario.node3.app[0] throughput:vector ETV
+vector 150 Scenario.node3.app[0] throughput:vector ETV
 attr source throughput(packetReceived)
 attr title "throughput, vector"
 attr unit bps
-vector 155 Scenario.node4.app[0] throughput:vector ETV
+vector 151 Scenario.node4.app[0] throughput:vector ETV
 attr source throughput(packetReceived)
 attr title "throughput, vector"
 attr unit bps
-vector 156 Scenario.node5.app[0] throughput:vector ETV
+vector 152 Scenario.node5.app[0] throughput:vector ETV
 attr source throughput(packetReceived)
 attr title "throughput, vector"
 attr unit bps
-vector 157 Scenario.node6.app[0] throughput:vector ETV
+vector 153 Scenario.node6.app[0] throughput:vector ETV
 attr source throughput(packetReceived)
 attr title "throughput, vector"
 attr unit bps
-151	158	0.066316205134	120634.16451281
-152	158	0.066316205134	120634.16451281
-153	158	0.066316205134	120634.16451281
-154	158	0.066316205134	120634.16451281
-155	158	0.066316205134	180951.24676921
-156	158	0.066316205134	120634.16451281
-157	158	0.066316205134	120634.16451281
+147	156	0.06598644445	121237.021735
+148	156	0.06598644445	121237.021735
+149	156	0.06598644445	121237.021735
+150	156	0.06598644445	121237.021735
+151	156	0.06598644445	181855.5326025
+152	156	0.06598644445	121237.021735
+153	156	0.06598644445	121237.021735
 

@@ -38,6 +38,10 @@ public:
     void beaconCallback();
 
     void test(const char * msg);
+
+private:
+    Application * getAppFromId(int id);
+    cPolylineFigure * createLine(double x1, double y1, double x2, double y2, const char * color, double width);
 };
 
 #endif

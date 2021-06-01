@@ -107,6 +107,8 @@ out/gcc-release//src/Application.o: src/Application.cc src/Application.h \
  /opt/omnetpp/samples/inet4.3/src/inet/queueing/contract/IPacketProcessor.h \
  /opt/omnetpp/samples/inet4.3/src/inet/queueing/contract/IPassivePacketSink.h \
  /opt/omnetpp/samples/inet4.3/src/inet/networklayer/common/L3AddressTag_m.h \
+ /home/joppe/Files/Study/MSc/2020-2021/2B/AHN/veins/src/veins/visualizer/roads/RoadsCanvasVisualizer.h \
+ /home/joppe/Files/Study/MSc/2020-2021/2B/AHN/veins/src/veins/modules/utility/SignalManager.h \
  src/veins_inet/VeinsInetSampleMessage_m.h \
  /opt/omnetpp/samples/inet4.3/src/inet/common/packet/chunk/Chunk_m.h \
  /opt/omnetpp/samples/inet4.3/src/inet/common/Units_m.h \
@@ -225,6 +227,8 @@ src/veins_inet/VeinsInetMobility.h:
 /opt/omnetpp/samples/inet4.3/src/inet/queueing/contract/IPacketProcessor.h:
 /opt/omnetpp/samples/inet4.3/src/inet/queueing/contract/IPassivePacketSink.h:
 /opt/omnetpp/samples/inet4.3/src/inet/networklayer/common/L3AddressTag_m.h:
+/home/joppe/Files/Study/MSc/2020-2021/2B/AHN/veins/src/veins/visualizer/roads/RoadsCanvasVisualizer.h:
+/home/joppe/Files/Study/MSc/2020-2021/2B/AHN/veins/src/veins/modules/utility/SignalManager.h:
 src/veins_inet/VeinsInetSampleMessage_m.h:
 /opt/omnetpp/samples/inet4.3/src/inet/common/packet/chunk/Chunk_m.h:
 /opt/omnetpp/samples/inet4.3/src/inet/common/Units_m.h:

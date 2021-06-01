@@ -10,11 +10,14 @@
 #include "inet/networklayer/common/L3AddressTag_m.h"
 #include "inet/transportlayer/contract/udp/UdpControlInfo_m.h"
 
+#include "veins/visualizer/roads/RoadsCanvasVisualizer.h"
+
 #include "veins_inet/veins_inet.h"
 #include "veins_inet/VeinsInetSampleMessage_m.h"
 
 #include <memory>
 #include <sstream>
+#include <vector>
 
 using namespace inet;
 using namespace omnetpp;
@@ -63,16 +66,8 @@ void Application::processPacket(std::shared_ptr<inet::Packet> pk){
 
     EV_INFO << "m_id : " << m_id << std::endl;
 
-    cModule * mod = parent->getSimulation()->getModule(m_id);
     // Check if static or veins application
-    Application * sender;
-    if(staticApplication){
-        StaticApplication * app = check_and_cast<StaticApplication*>(mod);
-        sender = app->app;
-    }else{
-        VeinsApplication * app = check_and_cast<VeinsApplication*>(mod);
-        sender = app->app;
-    }
+    Application * sender = getAppFromId(m_id);
 
     sender->test("Test123");
 }
@@ -99,4 +94,31 @@ void Application::beaconCallback(){
 
 void Application::test(const char * msg){
     EV_INFO << parent->getId() << " received a msg: " << msg << std::endl;
+
+    cCanvas * canvas = parent->getSimulation()->getSystemModule()->getCanvas();
+    auto * line = createLine(0, 0, 100, 100, "orange", 4);
+    canvas->addFigure(line);
+}
+
+Application * Application::getAppFromId(int id){
+    cModule * mod = parent->getSimulation()->getModule(id);
+    if(!mod) return nullptr;
+    if(staticApplication){
+        StaticApplication * app = check_and_cast<StaticApplication*>(mod);
+        if(!app) return nullptr;
+        return app->app;
+    }else{
+        VeinsApplication * app = check_and_cast<VeinsApplication*>(mod);
+        if(!app) return nullptr;
+        return app->app;
+    }
+}
+
+cPolylineFigure * Application::createLine(double x1, double y1, double x2, double y2, const char * color, double width){
+    std::vector<cFigure::Point> points = {cFigure::Point(x1, y1), cFigure::Point(x2, y2)};
+    auto * line = new cPolylineFigure();
+    line->setPoints(points);
+    line->setLineWidth(width);
+    line->setLineColor(cFigure::Color(color));
+    return line;
 }
