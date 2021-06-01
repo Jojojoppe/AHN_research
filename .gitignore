@@ -1,0 +1,7 @@
+out/
+wireless
+*.o
+*.d
+
+simulations/static/results
+simulations/straight/results
