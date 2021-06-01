@@ -1,8 +1,8 @@
 version 3
-run General-0-20210601-18:47:47-3334944
+run General-0-20210601-18:51:22-3352773
 attr configname General
-attr datetime 20210601-18:47:47
-attr datetimef 20210601-184747
+attr datetime 20210601-18:51:22
+attr datetimef 20210601-185122
 attr experiment General
 attr inifile omnetpp.ini
 attr iterationvars ""
@@ -10,7 +10,7 @@ attr iterationvarsd ""
 attr iterationvarsf ""
 attr measurement ""
 attr network Scenario
-attr processid 3334944
+attr processid 3352773
 attr repetition 0
 attr replication #0
 attr resultdir results
@@ -704,85 +704,6 @@ vector 170 Scenario.node2.wlan[0].mac.dcf.channelAccess.inProgressFrames queuein
 attr interpolationmode none
 attr source queueingTime(packetDequeued)
 attr title "queueing times, vector"
-vector 171 Scenario.node3.app[0] packetSent:vector(packetBytes) ETV
-attr interpolationmode none
-attr source packetSent
-attr title "packets sent, vector(packetBytes)"
-vector 172 Scenario.node3.udp packetSent:vector(packetBytes) ETV
-attr interpolationmode none
-attr source packetSent
-attr title "packets sent, vector(packetBytes)"
-vector 173 Scenario.node3.lo[0].lo rcvdPkFromHl:vector(packetBytes) ETV
-attr interpolationmode none
-attr source packetReceivedFromUpper
-attr title "packets received from higher layer, vector(packetBytes)"
-vector 174 Scenario.node3.lo[0].lo passedUpPk:vector(packetBytes) ETV
-attr interpolationmode none
-attr source packetSentToUpper
-attr title "packets passed to higher layer, vector(packetBytes)"
-vector 175 Scenario.node3.wlan[0].mac packetReceivedFromUpper:vector(packetBytes) ETV
-attr interpolationmode none
-attr title "packets received from upper layer, vector(packetBytes)"
-vector 176 Scenario.node3.wlan[0].mac.dcf.channelAccess.pendingQueue packetPushed:vector(packetBytes) ETV
-attr interpolationmode none
-attr title "packet pushed, vector(packetBytes)"
-vector 177 Scenario.node3.wlan[0].mac.dcf.channelAccess.pendingQueue queueLength:vector ETV
-attr autoWarmupFilter false
-attr interpolationmode sample-hold
-attr source "warmup(count(packetPushed) - count(packetPulled) - count(packetRemoved) - count(packetDropped))"
-attr title "queue length, vector"
-attr type int
-vector 178 Scenario.node3.wlan[0].mac.dcf.channelAccess.contention backoffPeriodGenerated:vector ETV
-attr interpolationmode none
-attr title "backoff periods, vector"
-vector 179 Scenario.node3.wlan[0].mac.dcf.channelAccess.contention backoffActive:vector ETV
-attr autoWarmupFilter false
-attr interpolationmode sample-hold
-attr source warmup(count(backoffStarted)-count(backoffStopped))
-attr title "backoff active, vector"
-vector 180 Scenario.node3.wlan[0].mac.dcf.channelAccess.pendingQueue packetPulled:vector(packetBytes) ETV
-attr interpolationmode none
-attr title "packet pulled, vector(packetBytes)"
-vector 181 Scenario.node3.wlan[0].mac.dcf.channelAccess.pendingQueue queueingTime:vector ETV
-attr interpolationmode none
-attr source queueingTime(packetPulled)
-attr title "queueing times, vector"
-attr unit s
-vector 182 Scenario.node3.wlan[0].mac.dcf.channelAccess.inProgressFrames queueLength:vector ETV
-attr autoWarmupFilter false
-attr interpolationmode sample-hold
-attr source "warmup(count(packetEnqueued) - count(packetDequeued))"
-attr title "queue length, vector"
-vector 183 Scenario.node3.wlan[0].mac.dcf datarateSelected:vector ETV
-attr interpolationmode none
-attr title "datarates selected, vector"
-vector 184 Scenario.node3.wlan[0].mac packetSentToLower:vector(packetBytes) ETV
-attr interpolationmode none
-attr title "packets sent to lower layer, vector(packetBytes)"
-vector 185 Scenario.node3.wlan[0].mac.dcf frameSequenceActive:vector ETV
-attr autoWarmupFilter false
-attr interpolationmode sample-hold
-attr source warmup(count(frameSequenceStarted)-count(frameSequenceFinished))
-attr title "frame sequence active, vector"
-vector 186 Scenario.node3.wlan[0].radio transmissionState:vector ETV
-attr interpolationmode sample-hold
-attr source transmissionStateChanged
-attr title "Radio transmission state, vector"
-vector 187 Scenario.node3.wlan[0].mac.dcf packetSentToPeer:vector(packetBytes) ETV
-attr interpolationmode none
-attr title "packets sent, vector(packetBytes)"
-vector 188 Scenario.node3.wlan[0].mac.dcf packetSentToPeerMulticast:vector(packetBytes) ETV
-attr interpolationmode none
-attr source ieee80211Multicast(packetSentToPeer)
-attr title "packets sent: multicast, vector(packetBytes)"
-vector 189 Scenario.node3.wlan[0].mac.dcf packetSentToPeerWithoutRetry:vector(packetBytes) ETV
-attr interpolationmode none
-attr source ieee80211NotRetry(packetSentToPeer)
-attr title "packets sent: without retry, vector(packetBytes)"
-vector 190 Scenario.node3.wlan[0].mac.dcf.channelAccess.inProgressFrames queueingTime:vector ETV
-attr interpolationmode none
-attr source queueingTime(packetDequeued)
-attr title "queueing times, vector"
 0	0	0	0
 0	0	0	0
 0	0	0	2
@@ -802,8 +723,6 @@ attr title "queueing times, vector"
 6	0	0	0
 6	0	0	0
 6	0	0	2
-6	264	0.079699999094	3
-6	273	0.080115999094	2
 7	0	0	3
 8	0	0	0
 8	0	0	0
@@ -830,7 +749,6 @@ attr title "queueing times, vector"
 14	177	0.066316531653	1
 14	212	0.075500710891	3
 14	240	0.075916710891	1
-14	268	0.079700469419	3
 15	0	0	0
 15	0	0	0
 15	35	0.014700342651	0
@@ -849,8 +767,6 @@ attr title "queueing times, vector"
 15	212	0.075500710891	0
 15	240	0.075916710891	0
 15	240	0.075916710891	0
-15	268	0.079700469419	0
-15	268	0.079700469419	0
 16	0	0	1
 16	37	0.014700530355	3
 16	55	0.015116530355	1
@@ -860,7 +776,6 @@ attr title "queueing times, vector"
 16	165	0.06631634312	1
 16	209	0.075500355875	3
 16	222	0.075916355875	1
-16	267	0.079700365301	3
 17	0	0	0
 17	0	0	0
 17	37	0.014700530355	0
@@ -883,8 +798,6 @@ attr title "queueing times, vector"
 17	209	0.075500355875	0
 17	222	0.075916355875	0
 17	222	0.075916355875	0
-17	267	0.079700365301	0
-17	267	0.079700365301	0
 18	0	0	1
 18	39	0.014700827187	3
 18	67	0.015116827187	1
@@ -894,7 +807,6 @@ attr title "queueing times, vector"
 18	171	0.066316468275	1
 18	206	0.075499999523	0
 18	215	0.075915999523	1
-18	269	0.079700532797	3
 19	0	0	0
 19	0	0	0
 19	39	0.014700827187	0
@@ -917,8 +829,6 @@ attr title "queueing times, vector"
 19	206	0.075499999523	0
 19	215	0.075915999523	0
 19	215	0.075915999523	0
-19	269	0.079700532797	0
-19	269	0.079700532797	0
 20	0	0	1
 20	36	0.014700353912	3
 20	49	0.015116353912	1
@@ -928,8 +838,6 @@ attr title "queueing times, vector"
 20	183	0.066316709318	1
 20	211	0.075500533226	3
 20	234	0.075916533226	1
-20	264	0.079699999094	0
-20	273	0.080115999094	1
 21	0	0	0
 21	0	0	0
 21	36	0.014700353912	0
@@ -948,14 +856,6 @@ attr title "queueing times, vector"
 21	211	0.075500533226	0
 21	234	0.075916533226	0
 21	234	0.075916533226	0
-21	259	0.079699999094	0
-21	259	0.079699999094	2
-21	262	0.079699999094	2
-21	262	0.079699999094	0
-21	264	0.079699999094	0
-21	264	0.079699999094	0
-21	273	0.080115999094	0
-21	273	0.080115999094	0
 22	0	0	1
 22	38	0.014700822432	3
 22	61	0.015116822432	1
@@ -965,7 +865,6 @@ attr title "queueing times, vector"
 22	158	0.06631599795	1
 22	210	0.075500469848	3
 22	228	0.075916469848	1
-22	270	0.079700710462	3
 23	0	0	0
 23	0	0	0
 23	38	0.014700822432	0
@@ -988,8 +887,6 @@ attr title "queueing times, vector"
 23	210	0.075500469848	0
 23	228	0.075916469848	0
 23	228	0.075916469848	0
-23	270	0.079700710462	0
-23	270	0.079700710462	0
 24	0	0	1
 24	33	0.014699999988	0
 24	42	0.015115999988	1
@@ -998,8 +895,6 @@ attr title "queueing times, vector"
 24	156	0.065900820394	3
 24	189	0.066316820394	1
 24	213	0.075500826722	3
-24	246	0.075916826722	1
-24	266	0.079700353018	3
 25	0	0	0
 25	0	0	0
 25	28	0.014699999988	0
@@ -1020,10 +915,6 @@ attr title "queueing times, vector"
 25	189	0.066316820394	0
 25	213	0.075500826722	0
 25	213	0.075500826722	0
-25	246	0.075916826722	0
-25	246	0.075916826722	0
-25	266	0.079700353018	0
-25	266	0.079700353018	0
 26	0	0	1
 26	40	0.014701047379	3
 26	73	0.015117047379	1
@@ -1033,7 +924,6 @@ attr title "queueing times, vector"
 26	159	0.066316340613	1
 26	208	0.075500353447	3
 26	216	0.075916353447	1
-26	271	0.079700826293	3
 27	0	0	0
 27	0	0	0
 27	40	0.014701047379	0
@@ -1052,8 +942,6 @@ attr title "queueing times, vector"
 27	208	0.075500353447	0
 27	216	0.075916353447	0
 27	216	0.075916353447	0
-27	271	0.079700826293	0
-27	271	0.079700826293	0
 28	0	0	15
 29	0	0	15
 30	0	0	15
@@ -1075,15 +963,12 @@ attr title "queueing times, vector"
 44	29	0.014699999988	508
 44	134	0.018116530474	508
 44	193	0.066316820394	508
-44	250	0.075916826722	508
 45	29	0.014699999988	1
 45	134	0.018116530474	2
 45	193	0.066316820394	3
-45	250	0.075916826722	4
 46	30	0.014699999988	500
 46	135	0.018116530474	500
 46	194	0.066316820394	500
-46	251	0.075916826722	500
 47	32	0.014699999988	558
 48	32	0.014699999988	0
 49	32	0.014699999988	1
@@ -1156,17 +1041,14 @@ attr title "queueing times, vector"
 71	122	0.018116366314	508
 71	187	0.066316709318	508
 71	238	0.075916533226	508
-71	260	0.079699999094	508
 72	53	0.015116353912	1
 72	122	0.018116366314	2
 72	187	0.066316709318	3
 72	238	0.075916533226	4
-72	260	0.079699999094	5
 73	54	0.015116353912	500
 73	123	0.018116366314	500
 73	188	0.066316709318	500
 73	239	0.075916533226	500
-73	261	0.079699999094	500
 74	56	0.015116530355	558
 74	166	0.06631634312	558
 74	223	0.075916355875	558
@@ -1309,19 +1191,14 @@ attr title "queueing times, vector"
 125	98	0.018116000107	0.000416
 126	131	0.018116530474	558
 126	190	0.066316820394	558
-126	247	0.075916826722	558
 127	131	0.018116530474	558
 127	190	0.066316820394	558
-127	247	0.075916826722	558
 128	131	0.018116530474	558
 128	190	0.066316820394	558
-128	247	0.075916826722	558
 129	131	0.018116530474	558
 129	190	0.066316820394	558
-129	247	0.075916826722	558
 130	131	0.018116530474	530
 130	190	0.066316820394	530
-130	247	0.075916826722	530
 131	138	0.06589999795	500
 132	139	0.06589999795	508
 133	141	0.06589999795	528
@@ -1376,66 +1253,39 @@ attr title "queueing times, vector"
 168	214	0.075915999523	558
 169	214	0.075915999523	558
 170	214	0.075915999523	0.000416
-171	253	0.079699999094	500
-172	254	0.079699999094	508
-173	256	0.079699999094	528
-174	256	0.079699999094	528
-175	259	0.079699999094	530
-176	259	0.079699999094	558
-177	259	0.079699999094	1
-177	263	0.079699999094	0
-178	259	0.079699999094	9
-179	259	0.079699999094	1
-179	262	0.079699999094	0
-180	263	0.079699999094	558
-181	263	0.079699999094	0
-182	263	0.079699999094	1
-182	272	0.080115999094	0
-183	263	0.079699999094	12000000
-184	263	0.079699999094	558
-185	263	0.079699999094	1
-185	272	0.080115999094	0
-186	264	0.079699999094	1
-186	265	0.079699999094	2
-186	272	0.080115999094	1
-186	273	0.080115999094	0
-187	272	0.080115999094	558
-188	272	0.080115999094	558
-189	272	0.080115999094	558
-190	272	0.080115999094	0.000416
-vector 191 Scenario.node0.app[0] throughput:vector ETV
+vector 171 Scenario.node0.app[0] throughput:vector ETV
 attr source throughput(packetReceived)
 attr title "throughput, vector"
 attr unit bps
-vector 192 Scenario.node1.app[0] throughput:vector ETV
+vector 172 Scenario.node1.app[0] throughput:vector ETV
 attr source throughput(packetReceived)
 attr title "throughput, vector"
 attr unit bps
-vector 193 Scenario.node2.app[0] throughput:vector ETV
+vector 173 Scenario.node2.app[0] throughput:vector ETV
 attr source throughput(packetReceived)
 attr title "throughput, vector"
 attr unit bps
-vector 194 Scenario.node3.app[0] throughput:vector ETV
+vector 174 Scenario.node3.app[0] throughput:vector ETV
 attr source throughput(packetReceived)
 attr title "throughput, vector"
 attr unit bps
-vector 195 Scenario.node4.app[0] throughput:vector ETV
+vector 175 Scenario.node4.app[0] throughput:vector ETV
 attr source throughput(packetReceived)
 attr title "throughput, vector"
 attr unit bps
-vector 196 Scenario.node5.app[0] throughput:vector ETV
+vector 176 Scenario.node5.app[0] throughput:vector ETV
 attr source throughput(packetReceived)
 attr title "throughput, vector"
 attr unit bps
-vector 197 Scenario.node6.app[0] throughput:vector ETV
+vector 177 Scenario.node6.app[0] throughput:vector ETV
 attr source throughput(packetReceived)
 attr title "throughput, vector"
 attr unit bps
-191	273	0.080116083897	199710.21075581
-192	273	0.080116083897	199710.21075581
-193	273	0.080116083897	199710.21075581
-194	273	0.080116083897	249637.76344476
-195	273	0.080116083897	199710.21075581
-196	273	0.080116083897	199710.21075581
-197	273	0.080116083897	199710.21075581
+171	245	0.07591672894	210757.23655909
+172	245	0.07591672894	210757.23655909
+173	245	0.07591672894	210757.23655909
+174	245	0.07591672894	210757.23655909
+175	245	0.07591672894	210757.23655909
+176	245	0.07591672894	158067.92741932
+177	245	0.07591672894	210757.23655909
 

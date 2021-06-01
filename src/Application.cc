@@ -70,11 +70,13 @@ void Application::processPacket(std::shared_ptr<inet::Packet> pk){
     EV_INFO << "m_x : " << m_x << std::endl;
     EV_INFO << "m_y : " << m_y << std::endl;
 
-    // Check if static or veins application
-    Application * sender = getAppFromId(m_id);
-
-    sender->test("Test123");
-
+    // Get position from mobility
+    cModule * ppmodule = parent->getParentModule()->getSubmodule("mobility");
+    IMobility *mmobility = check_and_cast<IMobility *>(ppmodule);
+    Coord pos = mmobility->getCurrentPosition();
+    // Draw line between self and txer
+    auto * line = createLine(pos.x, pos.y, m_x, m_y, "purple", 4);
+    showLine(line);
 }
 
 void Application::beaconCallback(){
@@ -102,10 +104,6 @@ void Application::beaconCallback(){
     std::unique_ptr<Packet> packet = std::make_unique<Packet>(std::string("beacon").c_str());
     packet->insertAtBack(payload);
     sendPacket(std::move(packet));
-}
-
-void Application::test(const char * msg){
-    EV_INFO << parent->getId() << " received a msg: " << msg << std::endl;
 }
 
 Application * Application::getAppFromId(int id){

@@ -38,8 +38,6 @@ public:
 
     void beaconCallback();
 
-    void test(const char * msg);
-
 private:
     Application * getAppFromId(int id);
 
