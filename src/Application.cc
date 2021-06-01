@@ -47,7 +47,6 @@ void Application::startApplication(){
 }
 
 void Application::stopApplication(){
-
 }
 
 void Application::processPacket(std::shared_ptr<inet::Packet> pk){
@@ -57,19 +56,25 @@ void Application::processPacket(std::shared_ptr<inet::Packet> pk){
     std::istringstream beaconContent(content);
     std::string tmp;
 
-    beaconContent >> tmp;
-    beaconContent >> tmp;
+    beaconContent >> tmp; beaconContent >> tmp;
     int m_id = std::stoi(tmp);
+    beaconContent >> tmp; beaconContent >> tmp;
+    int m_x = std::stoi(tmp);
+    beaconContent >> tmp; beaconContent >> tmp;
+    int m_y = std::stoi(tmp);
 
     // Check if self message
     if(m_id == this->ID) return;
 
     EV_INFO << "m_id : " << m_id << std::endl;
+    EV_INFO << "m_x : " << m_x << std::endl;
+    EV_INFO << "m_y : " << m_y << std::endl;
 
     // Check if static or veins application
     Application * sender = getAppFromId(m_id);
 
     sender->test("Test123");
+
 }
 
 void Application::beaconCallback(){
@@ -85,6 +90,13 @@ void Application::beaconCallback(){
     // Set beacon content
     std::ostringstream beaconContent;
     beaconContent << "ID " << this->ID << " ";
+    // Get position from mobility
+    cModule * ppmodule = parent->getParentModule()->getSubmodule("mobility");
+    IMobility *mmobility = check_and_cast<IMobility *>(ppmodule);
+    Coord pos = mmobility->getCurrentPosition();
+    beaconContent << "x " << pos.x << " ";
+    beaconContent << "y " << pos.y << " ";
+    // Set content
     payload->setRoadId(beaconContent.str().c_str());
 
     std::unique_ptr<Packet> packet = std::make_unique<Packet>(std::string("beacon").c_str());
@@ -94,10 +106,6 @@ void Application::beaconCallback(){
 
 void Application::test(const char * msg){
     EV_INFO << parent->getId() << " received a msg: " << msg << std::endl;
-
-    cCanvas * canvas = parent->getSimulation()->getSystemModule()->getCanvas();
-    auto * line = createLine(0, 0, 100, 100, "orange", 4);
-    canvas->addFigure(line);
 }
 
 Application * Application::getAppFromId(int id){
@@ -121,4 +129,14 @@ cPolylineFigure * Application::createLine(double x1, double y1, double x2, doubl
     line->setLineWidth(width);
     line->setLineColor(cFigure::Color(color));
     return line;
+}
+
+void Application::showLine(cPolylineFigure * line){
+    cCanvas * canvas = parent->getSimulation()->getSystemModule()->getCanvas();
+    canvas->addFigure(line);
+}
+
+void Application::deleteLine(cPolylineFigure * line){
+    cCanvas * canvas = parent->getSimulation()->getSystemModule()->getCanvas();
+    canvas->removeFigure(line);
 }

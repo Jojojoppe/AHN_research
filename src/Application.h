@@ -33,6 +33,7 @@ public:
 
     void startApplication();
     void stopApplication();
+
     void processPacket(std::shared_ptr<inet::Packet> pk);
 
     void beaconCallback();
@@ -41,7 +42,10 @@ public:
 
 private:
     Application * getAppFromId(int id);
+
     cPolylineFigure * createLine(double x1, double y1, double x2, double y2, const char * color, double width);
+    void showLine(cPolylineFigure * line);
+    void deleteLine(cPolylineFigure * line);
 };
 
 #endif

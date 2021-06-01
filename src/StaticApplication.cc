@@ -55,7 +55,9 @@ void StaticApplication::handleStartOperation(LifecycleOperation* operation){
 }
 
 bool StaticApplication::startApplication(){
+    // Create application
     app = new Application(this, std::bind(&StaticApplication::sendPacket, this, std::placeholders::_1), &timerManager, true);
+    // Start application
     app->startApplication();
     return true;
 }
