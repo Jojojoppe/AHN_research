@@ -26,6 +26,10 @@ network Scenario{
     	@display("bgb=600,430");
     	
     	double beaconPeriod = default(0.1);
+        double dataExchangeInterval = default(0.050);
+        int nrPackets = default(600);
+        int nrBytesPerPacket = default(1600);
+        double mmwLoopTime = default(0.01);
     	
     submodules:
         radioMedium: Ieee80211DimensionalRadioMedium {
