@@ -275,8 +275,17 @@ void Application::showLineTimed(double x1, double y1, double x2, double y2, cons
     timerManager->create(veins::TimerSpecification(callback).oneshotIn(time));
 }
 
-bool Application::startTransmissionRx(int packets, int bytesPerPacket, double time, Coord txPos){
+bool Application::startTransmissionRx(int txer, int packets, int bytesPerPacket, double time, Coord txPos){
+    if(!mmw_cur_rxing){
+        mmw_cur_tx = txer;
+        mmw_cur_rxing = true;
+        return true;
+    }
+    return false;
+}
 
+bool Application::endTransmissionRx(){
+    mmw_cur_rxing = false;
     return true;
 }
 
@@ -299,12 +308,27 @@ void Application::startTransmissionTx(){
     EV_INFO << "Transmit mmWave data to " << rxer << std::endl;
 
     auto * app = getAppFromId(rxer);
-    bool successful = app->startTransmissionRx(nrPackets, nrBytesPerPacket, dataExchangeInterval, getPos());
+    bool successful = app->startTransmissionRx(ID, nrPackets, nrBytesPerPacket, dataExchangeInterval, getPos());
     if(successful){
         Coord txPos = getPos();
         Coord rxPos = app->getPos();
         showLineTimed(rxPos.x, rxPos.y, txPos.x, txPos.y, "purple", 4, dataExchangeInterval);
+
+        // Schedule end of transmission
+        mmw_cur_rx = rxer;
+        mmw_cur_txing = true;
+
+        std::function<void()> callback = std::bind(&Application::endTransmissionTx, this);
+        timerManager->create(veins::TimerSpecification(callback).oneshotIn(dataExchangeInterval));
+    }else{
+        EV_ERROR << "Scheduled transmission failed: antenna's not directed to each other!" << std::endl;
     }
+}
+
+void Application::endTransmissionTx(){
+    mmw_cur_txing = false;
+    auto * app = getAppFromId(mmw_cur_rx);
+    app->endTransmissionTx();
 }
 
 // --------------------

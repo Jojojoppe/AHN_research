@@ -1,5 +1,6 @@
 out/
 wireless
+wireless_dbg
 *.o
 *.d
 

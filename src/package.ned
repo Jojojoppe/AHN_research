@@ -1,3 +1,0 @@
-package wireless;
-
-@license(LGPL);

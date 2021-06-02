@@ -59,6 +59,11 @@ private:
     // My transmissions
     std::unordered_map<int, double> mmw_todo;
     std::vector<std::pair<int, double>> mmw_outgoing_scheduled;
+    // Current transmission
+    int mmw_cur_rx;
+    bool mmw_cur_txing = false;
+    int mmw_cur_tx;
+    bool mmw_cur_rxing = false;
     // ----------
 
     // DEBUG
@@ -76,7 +81,8 @@ public:
     void beaconCallback();
 
     // Returns false if no transmission can be done
-    bool startTransmissionRx(int packets, int bytesPerPacket, double time, inet::Coord txPos);
+    bool startTransmissionRx(int txer, int packets, int bytesPerPacket, double time, inet::Coord txPos);
+    bool endTransmissionRx();
 
 private:
     Application * getAppFromId(int id);
@@ -88,6 +94,7 @@ private:
     void showLineTimed(double x1, double y1, double x2, double y2, const char * color, double width, double time);
 
     void startTransmissionTx();
+    void endTransmissionTx();
 
     // mmWave MAC functions
     void mmw_loop();
