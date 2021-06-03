@@ -115,7 +115,7 @@ private:
 
     bool mmw_getStateAt(double time, double duration, int node);
     void mmw_schedule(int node, double starttime, int othernode, double duration, bool direction);
-    void mmw_unschedule(int node, int othernode, bool direction);
+    void mmw_unschedule(int node, int othernode, double starttime, bool direction);
 
     double mmw_findTimeSlot(int txer, double duration);
 };

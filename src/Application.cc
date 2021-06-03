@@ -54,7 +54,7 @@ void Application::startApplication(){
 
     // Schedule mmw MAC main loop
     callback = std::bind(&Application::mmw_loop, this);
-    timerManager->create(veins::TimerSpecification(callback).oneshotIn(parent->getParentModule()->getAncestorPar("mmwLoopTime")));
+    timerManager->create(veins::TimerSpecification(callback).oneshotIn(2*randwait*beaconPeriod));
 
     std::ostringstream appname;
     appname << ID;
@@ -348,8 +348,7 @@ void Application::mmw_loop(){
 
     // DEBUG
     // Let node0 start transmission once when 4 neighbors are there
-    if(nodeName=="52" && neighbors.size()>=4 && db_oneshotTransmission){
-        db_oneshotTransmission = false;
+    if(nodeName=="52" && neighbors.size()>=4){
         EV_INFO << "send RTS" << std::endl;
 
         // Send RTS
@@ -493,7 +492,7 @@ void Application::mmw_schedule(int node, double starttime, int othernode, double
     }
     mmw_scheduled[node][starttime] = std::make_tuple(othernode, duration, direction);
     // Schedule removal function to remove scheduled slot from list
-    std::function<void()> callback = std::bind(&Application::mmw_unschedule, this, node, othernode, direction);
+    std::function<void()> callback = std::bind(&Application::mmw_unschedule, this, node, othernode, starttime, direction);
     timerManager->create(veins::TimerSpecification(callback).oneshotAt(starttime+duration));
     EV_INFO << "transmission scheduled at "<< starttime << "-" << starttime+duration << " between " << node << " and " << othernode << std::endl;
 
@@ -505,8 +504,11 @@ void Application::mmw_schedule(int node, double starttime, int othernode, double
     }
 }
 
-void Application::mmw_unschedule(int node, int othernode, bool direction){
+void Application::mmw_unschedule(int node, int othernode, double starttime, bool direction){
     EV_INFO << "transmission between " << node << " and " << othernode << " ended" << std::endl;
+
+    // Remove from scheduled map
+    mmw_scheduled[node].erase(starttime);
 
     // Check if I was sending
     if(node==ID && direction){
