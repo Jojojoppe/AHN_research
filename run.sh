@@ -4,6 +4,9 @@ OMNETPP_BIN=/opt/omnetpp/bin
 INET4_3_PROJ=/opt/omnetpp/samples/inet4.3
 VEINS_PROJ=~/Files/Study/MSc/2020-2021/2B/AHN/veins
 D=
+U=Qtenv
+
+[[ $1 == "cmd" ]] && U=Cmdenv
 
 PATH=$OMNETPP_BIN:$PATH
 
@@ -33,4 +36,5 @@ cd simulations/static && \
 ../../wireless -m \
     -n ..:../../src:$INET4_3_PROJ/src:$VEINS_PROJ/examples/veins:$VEINS_PROJ/src/veins \
     --image-path=$INET4_3_PROJ/images:$VEINS_PROJ/images \
-    -l $INET4_3_PROJ/src/INET -l $VEINS_PROJ/src/veins omnetpp.ini
+    -l $INET4_3_PROJ/src/INET -l $VEINS_PROJ/src/veins omnetpp.ini \
+    -u $U

@@ -29,7 +29,9 @@ network Scenario{
         double dataExchangeInterval = default(0.050);
         int nrPackets = default(600);
         int nrBytesPerPacket = default(1600);
-        double mmwLoopTime = default(0.01);
+        double mmwLoopTime = default(0.1);
+        int txCount = default(1);
+        int txDstCount = default(4);
     	
     submodules:
         radioMedium: Ieee80211DimensionalRadioMedium {
@@ -45,7 +47,7 @@ network Scenario{
         node0: StaticNode {
             @display("p=356,289");
         }
-
+        
         node1: StaticNode {
             @display("p=288,207");
         }

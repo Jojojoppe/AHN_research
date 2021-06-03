@@ -63,9 +63,14 @@ private:
     std::unordered_map<int, std::vector<std::pair<int, double>>> mmw_unscheduled_rts;
 
     bool antennaBusy = false;
+    int antennaDirected;
 
     // DEBUG
     bool db_oneshotTransmission = true;
+    double db_starttime;
+    std::unordered_map<int, double> db_delays;
+    std::vector<int> db_destinations;
+    static int db_txcount;
 
 public:
     // LOGGING
@@ -91,8 +96,8 @@ public:
     void beaconCallback();
 
     // Returns false if no transmission can be done
-    bool startTransmissionRx();
-    bool endTransmissionRx();
+    bool startTransmissionRx(int txer);
+    bool endTransmissionRx(int txer);
 
 private:
     Application * getAppFromId(int id);
@@ -102,6 +107,8 @@ private:
     void showLine(cPolylineFigure * line);
     void deleteLine(cPolylineFigure * line);
     void showLineTimed(double x1, double y1, double x2, double y2, const char * color, double width, double time);
+
+    void setColor(const char * color);
 
     void startTransmissionTx(int rxer);
     void endTransmissionTx(int rxer);

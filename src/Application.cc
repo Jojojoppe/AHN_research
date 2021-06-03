@@ -23,6 +23,8 @@
 using namespace inet;
 using namespace omnetpp;
 
+int Application::db_txcount = 0;
+
 Application::Application(inet::ApplicationBase * parent, std::function<void(std::unique_ptr<Packet>)> sendPacket, veins::TimerManager * timerManager, bool staticApplication){
     this->parent = parent;
     this->sendPacket = sendPacket;
@@ -54,7 +56,7 @@ void Application::startApplication(){
 
     // Schedule mmw MAC main loop
     callback = std::bind(&Application::mmw_loop, this);
-    timerManager->create(veins::TimerSpecification(callback).oneshotIn(2*randwait*beaconPeriod));
+    timerManager->create(veins::TimerSpecification(callback).oneshotIn(0.0));
 
     std::ostringstream appname;
     appname << ID;
@@ -73,6 +75,10 @@ void Application::finish(){
 
     EV_INFO << "log_rx_data = " << log_rx_data << " B" << std::endl;
     EV_INFO << "log_tx_data = " << log_tx_data << " B" << std::endl;
+
+    EV_INFO << "delays = [";
+    for(auto & d : db_delays) EV_INFO << d.first << ":" << d.second << ",";
+    EV_INFO << "]" << std::endl;
 }
 
 void Application::processPacket(std::shared_ptr<inet::Packet> pk){
@@ -116,18 +122,18 @@ void Application::processPacket(std::shared_ptr<inet::Packet> pk){
 
     // Print beacon content
     // --------------------
-    EV_INFO << content << std::endl;
-    EV_INFO << "m_id : " << m_id << std::endl;
-    EV_INFO << "m_x : " << m_x << std::endl;
-    EV_INFO << "m_y : " << m_y << std::endl;
-    EV_INFO << "m_type: " << m_type << std::endl;
+    //EV_INFO << content << std::endl;
+    //EV_INFO << "m_id : " << m_id << std::endl;
+    //EV_INFO << "m_x : " << m_x << std::endl;
+    //EV_INFO << "m_y : " << m_y << std::endl;
+    //EV_INFO << "m_type: " << m_type << std::endl;
 
     if(m_type=="RTS"){
-        EV_INFO << "m_rts_rx: " << m_rts_rx << std::endl;
-        EV_INFO << "m_rts_dur: " << m_rts_dur << std::endl;
+        //EV_INFO << "m_rts_rx: " << m_rts_rx << std::endl;
+        //EV_INFO << "m_rts_dur: " << m_rts_dur << std::endl;
     }else if(m_type=="CTS"){
-        EV_INFO << "m_cts_rx: " << m_cts_rx << std::endl;
-        EV_INFO << "m_cts_del: " << m_cts_del << std::endl;
+        //EV_INFO << "m_cts_rx: " << m_cts_rx << std::endl;
+        //EV_INFO << "m_cts_del: " << m_cts_del << std::endl;
     }
     // --------------------
 
@@ -135,9 +141,9 @@ void Application::processPacket(std::shared_ptr<inet::Packet> pk){
     if(std::find(neighbors.begin(), neighbors.end(), m_id)==neighbors.end()){
         // Not yet in neighbor list, add to it
         neighbors.push_back(m_id);
-        EV_INFO << "New neighbor: [";
-        for(auto & ii : neighbors) EV_INFO << ii << ", ";
-        EV_INFO << "]" << std::endl;
+        //EV_INFO << "New neighbor: [";
+        //for(auto & ii : neighbors) EV_INFO << ii << ", ";
+        //EV_INFO << "]" << std::endl;
     }
 
     if(m_type=="RTS"){
@@ -230,6 +236,8 @@ void Application::beaconCallback(){
         beaconContent << "tp NONE ";
     }
 
+    EV_INFO << "sending " << beaconContent.str() << std::endl;
+
     // ------------------
     // Set content
     payload->setRoadId(beaconContent.str().c_str());
@@ -286,21 +294,29 @@ void Application::showLineTimed(double x1, double y1, double x2, double y2, cons
     timerManager->create(veins::TimerSpecification(callback).oneshotIn(time));
 }
 
+void Application::setColor(const char * color){
+    auto & dps = parent->getParentModule()->getDisplayString();
+    dps.setTagArg("i", 1, color);
+    dps.setTagArg("i", 2, 50);
+}
+
 // ---------------------
 // mmWave data functions
 // ---------------------
 
-bool Application::startTransmissionRx(){
+bool Application::startTransmissionRx(int txer){
     if(antennaBusy){
-        EV_ERROR << "Already ongoing transmission!" << std::endl;
+        EV_ERROR << "Already ongoing transmission! rx_reject!" << std::endl;
+        EV_ERROR << "Antenna currently directed to " << antennaDirected << " and cannot be directed to " << txer << std::endl;
         log_rx_rejects++;
         return false;
     }
     antennaBusy = true;
+    antennaDirected = txer;
     return true;
 }
 
-bool Application::endTransmissionRx(){
+bool Application::endTransmissionRx(int txer){
     antennaBusy = false;
     log_rx_success++;
     log_rx_data += nrPackets*nrBytesPerPacket;
@@ -309,15 +325,18 @@ bool Application::endTransmissionRx(){
 
 void Application::startTransmissionTx(int rxer){
     if(antennaBusy){
-        EV_ERROR << "Already ongoing transmission!" << std::endl;
+        EV_ERROR << "Already ongoing transmission! tx_reject!" << std::endl;
+        EV_ERROR << "Antenna currently directed to " << antennaDirected << " and cannot be directed to " << rxer << std::endl;
+        EV_ERROR << "Current time " << simTime().dbl() << std::endl;
         log_tx_rejects++;
         return;
     }
     auto * app = getAppFromId(rxer);
-    if(app->startTransmissionRx()){
-        EV_INFO << "Transmit mmWave data to " << rxer << std::endl;
+    if(app->startTransmissionRx(ID)){
+        EV_INFO << "Transmit mmWave data to " << rxer << " until " << simTime().dbl() + dataExchangeInterval << std::endl;
 
         antennaBusy = true;
+        antennaDirected = rxer;
 
         Coord txPos = getPos();
         Coord rxPos = app->getPos();
@@ -331,9 +350,10 @@ void Application::endTransmissionTx(int rxer){
     antennaBusy = false;
     log_tx_success++;
     log_tx_data += nrPackets*nrBytesPerPacket;
+    db_delays[rxer] = simTime().dbl() - db_starttime;
 
     auto * app = getAppFromId(rxer);
-    app->endTransmissionRx();
+    app->endTransmissionRx(ID);
 }
 
 // --------------------
@@ -348,8 +368,20 @@ void Application::mmw_loop(){
 
     // DEBUG
     // Let node0 start transmission once when 4 neighbors are there
-    if(nodeName=="52" && neighbors.size()>=4){
-        EV_INFO << "send RTS" << std::endl;
+    //if(nodeName=="52" && neighbors.size()>=4 && db_oneshotTransmission){
+    // if((nodeName=="52" || nodeName=="114") && neighbors.size()>=4 && db_oneshotTransmission){
+    if(neighbors.size()>=(int)parent->getParentModule()->getAncestorPar("txDstCount") && db_txcount<(int)parent->getParentModule()->getAncestorPar("txCount")){
+        db_oneshotTransmission = false;
+        db_starttime = simTime().dbl();
+        for(auto & n : neighbors){
+            db_delays[n] = +1.0/0.0;
+        }
+        db_destinations = neighbors;
+        db_txcount++;
+
+        setColor("red");
+
+        EV_INFO << "Data generated for " << ID << std::endl;
 
         // Send RTS
         sendRts = true;
@@ -385,7 +417,7 @@ void Application::mmw_send_rts(){
 
     // Normally this function would check for LOS neighbours
 
-    rts_rxNodes = neighbors;
+    rts_rxNodes = db_destinations;
     rts_transmissionDuration = dataExchangeInterval;
 }
 
@@ -406,6 +438,8 @@ void Application::mmw_send_cts(){
                 // Need to send CTS to txer
 
                 double delay = mmw_findTimeSlot(txer, duration);
+                // Add 0.00001 delay to compensate for sub 6GHz flight time
+                delay += 0.00001;
                 EV_INFO << "Feasible delay for CTS found to be " << delay << std::endl;
 
                 // Add to CTS beacon
@@ -449,7 +483,7 @@ double Application::mmw_findTimeSlot(int txer, double duration){
     for(auto & ii : changes){
         bool aOK = mmw_getStateAt(ii, duration, ID);
         bool bOK = mmw_getStateAt(ii, duration, txer);
-        EV_INFO << "change to free at: " << ii << " " << aOK << " " << bOK << std::endl;
+        //EV_INFO << "change to free at: " << ii << " " << aOK << " " << bOK << std::endl;
         if(!aOK && !bOK){
             // Found feasible spot
             return ii-simTime().dbl();
@@ -494,7 +528,7 @@ void Application::mmw_schedule(int node, double starttime, int othernode, double
     // Schedule removal function to remove scheduled slot from list
     std::function<void()> callback = std::bind(&Application::mmw_unschedule, this, node, othernode, starttime, direction);
     timerManager->create(veins::TimerSpecification(callback).oneshotAt(starttime+duration));
-    EV_INFO << "transmission scheduled at "<< starttime << "-" << starttime+duration << " between " << node << " and " << othernode << std::endl;
+    //EV_INFO << "transmission scheduled at "<< starttime << "-" << starttime+duration << " between " << node << " and " << othernode << std::endl;
 
     // Check if I need to send
     if(node==ID && direction){
@@ -505,7 +539,7 @@ void Application::mmw_schedule(int node, double starttime, int othernode, double
 }
 
 void Application::mmw_unschedule(int node, int othernode, double starttime, bool direction){
-    EV_INFO << "transmission between " << node << " and " << othernode << " ended" << std::endl;
+    //EV_INFO << "transmission between " << node << " and " << othernode << " ended" << std::endl;
 
     // Remove from scheduled map
     mmw_scheduled[node].erase(starttime);
