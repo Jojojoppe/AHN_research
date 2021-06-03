@@ -62,6 +62,8 @@ private:
     // txer, [<rxer, duration>]
     std::unordered_map<int, std::vector<std::pair<int, double>>> mmw_unscheduled_rts;
 
+    bool antennaBusy = false;
+
     // DEBUG
     bool db_oneshotTransmission = true;
 
@@ -70,8 +72,11 @@ public:
     // -------
     int log_rx_rejects = 0;
     int log_tx_rejects = 0;
+
     int log_rx_success = 0;
+    long log_rx_data = 0;
     int log_tx_success = 0;
+    long log_tx_data = 0;
 
 public:
     Application(inet::ApplicationBase * parent, std::function<void(std::unique_ptr<inet::Packet>)> sendPacket, veins::TimerManager * timerManager, bool staticApplication);
@@ -86,7 +91,7 @@ public:
     void beaconCallback();
 
     // Returns false if no transmission can be done
-    bool startTransmissionRx(int txer, int packets, int bytesPerPacket, double time, inet::Coord txPos);
+    bool startTransmissionRx();
     bool endTransmissionRx();
 
 private:
@@ -110,7 +115,7 @@ private:
 
     bool mmw_getStateAt(double time, double duration, int node);
     void mmw_schedule(int node, double starttime, int othernode, double duration, bool direction);
-    void mmw_unschedule(int node, int othernode);
+    void mmw_unschedule(int node, int othernode, bool direction);
 
     double mmw_findTimeSlot(int txer, double duration);
 };

@@ -66,9 +66,13 @@ void Application::stopApplication(){
 
 void Application::finish(){
     EV_INFO << "log_rx_rejects = " << log_rx_rejects << std::endl;
-    EV_INFO << "log_rx_success = " << log_rx_success << std::endl;
     EV_INFO << "log_tx_rejects = " << log_tx_rejects << std::endl;
+
+    EV_INFO << "log_rx_success = " << log_rx_success << std::endl;
     EV_INFO << "log_tx_success = " << log_tx_success << std::endl;
+
+    EV_INFO << "log_rx_data = " << log_rx_data << " B" << std::endl;
+    EV_INFO << "log_tx_data = " << log_tx_data << " B" << std::endl;
 }
 
 void Application::processPacket(std::shared_ptr<inet::Packet> pk){
@@ -286,27 +290,48 @@ void Application::showLineTimed(double x1, double y1, double x2, double y2, cons
 // mmWave data functions
 // ---------------------
 
-bool Application::startTransmissionRx(int txer, int packets, int bytesPerPacket, double time, Coord txPos){
+bool Application::startTransmissionRx(){
+    if(antennaBusy){
+        EV_ERROR << "Already ongoing transmission!" << std::endl;
+        log_rx_rejects++;
+        return false;
+    }
+    antennaBusy = true;
     return true;
 }
 
 bool Application::endTransmissionRx(){
+    antennaBusy = false;
+    log_rx_success++;
+    log_rx_data += nrPackets*nrBytesPerPacket;
     return true;
 }
 
 void Application::startTransmissionTx(int rxer){
+    if(antennaBusy){
+        EV_ERROR << "Already ongoing transmission!" << std::endl;
+        log_tx_rejects++;
+        return;
+    }
     auto * app = getAppFromId(rxer);
-    if(app->startTransmissionRx(ID, nrPackets, nrBytesPerPacket, dataExchangeInterval, getPos())){
+    if(app->startTransmissionRx()){
         EV_INFO << "Transmit mmWave data to " << rxer << std::endl;
+
+        antennaBusy = true;
 
         Coord txPos = getPos();
         Coord rxPos = app->getPos();
-        showLineTimed(rxPos.x, rxPos.y, txPos.x, txPos.y, "purple", 4, dataExchangeInterval);
+        showLineTimed(rxPos.x, rxPos.y, txPos.x, txPos.y, "purple", 8, dataExchangeInterval);
     }
 }
 
 void Application::endTransmissionTx(int rxer){
     EV_INFO << "End mmWave transmission to " << rxer << std::endl;
+
+    antennaBusy = false;
+    log_tx_success++;
+    log_tx_data += nrPackets*nrBytesPerPacket;
+
     auto * app = getAppFromId(rxer);
     app->endTransmissionRx();
 }
@@ -448,12 +473,12 @@ bool Application::mmw_getStateAt(double time, double duration, int node){
         bool i_direction = std::get<2>(i_info);
 
         // Check if starttime is in this scheduled transmission
-        if(time>=i_starttime && time<i_starttime+i_duration){
+        if(time>i_starttime && time<i_starttime+i_duration){
             // Start time collides with scheduled moment
             return true;
         }
         // Check if end time is in this scheduled transmission
-        if(time+duration>=i_starttime && time+duration<i_starttime+i_duration){
+        if(time+duration>i_starttime && time+duration<i_starttime+i_duration){
             // End time collides with scheduled moment
             return true;
         }
@@ -468,7 +493,7 @@ void Application::mmw_schedule(int node, double starttime, int othernode, double
     }
     mmw_scheduled[node][starttime] = std::make_tuple(othernode, duration, direction);
     // Schedule removal function to remove scheduled slot from list
-    std::function<void()> callback = std::bind(&Application::mmw_unschedule, this, node, othernode);
+    std::function<void()> callback = std::bind(&Application::mmw_unschedule, this, node, othernode, direction);
     timerManager->create(veins::TimerSpecification(callback).oneshotAt(starttime+duration));
     EV_INFO << "transmission scheduled at "<< starttime << "-" << starttime+duration << " between " << node << " and " << othernode << std::endl;
 
@@ -480,11 +505,11 @@ void Application::mmw_schedule(int node, double starttime, int othernode, double
     }
 }
 
-void Application::mmw_unschedule(int node, int othernode){
+void Application::mmw_unschedule(int node, int othernode, bool direction){
     EV_INFO << "transmission between " << node << " and " << othernode << " ended" << std::endl;
 
     // Check if I was sending
-    if(node==ID){
+    if(node==ID && direction){
         endTransmissionTx(othernode);
     }
 }
