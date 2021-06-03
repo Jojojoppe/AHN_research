@@ -358,6 +358,9 @@ void Application::mmw_recv_cts(int txer, std::vector<double> & delays, std::vect
 
 // This function is called when its sending an RTS
 void Application::mmw_send_rts(){
+
+    // Normally this function would check for LOS neighbours
+
     rts_rxNodes = neighbors;
     rts_transmissionDuration = dataExchangeInterval;
 }
@@ -378,8 +381,8 @@ void Application::mmw_send_cts(){
             if(rxer==ID){
                 // Need to send CTS to txer
 
-                double delay = 0.0;
-                // TODO scheduler
+                double delay = mmw_findTimeSlot(txer, duration);
+                EV_INFO << "Feasible delay for CTS found to be " << delay << std::endl;
 
                 // Add to CTS beacon
                 cts_rxNodes.push_back(txer);
@@ -398,6 +401,40 @@ void Application::mmw_send_cts(){
     }
 }
 
+// Find first feasible spot for txer and rxer (ME), returns time between now and starttime
+double Application::mmw_findTimeSlot(int txer, double duration){
+
+    std::vector<double> changes;
+
+    // Find changes in rxer
+    for(auto & ii : mmw_scheduled[ID]){
+        double i_starttime = ii.first;
+        double i_duration = std::get<1>(ii.second);
+        double i_endtime = i_starttime+i_duration;
+        changes.push_back(i_endtime);
+    }
+    // Find changes in txer
+    for(auto & ii : mmw_scheduled[txer]){
+        double i_starttime = ii.first;
+        double i_duration = std::get<1>(ii.second);
+        double i_endtime = i_starttime+i_duration;
+        changes.push_back(i_endtime);
+    }
+
+    // Loop over all changes and check if both are available
+    for(auto & ii : changes){
+        bool aOK = mmw_getStateAt(ii, duration, ID);
+        bool bOK = mmw_getStateAt(ii, duration, txer);
+        EV_INFO << "change to free at: " << ii << " " << aOK << " " << bOK << std::endl;
+        if(!aOK && !bOK){
+            // Found feasible spot
+            return ii-simTime().dbl();
+        }
+    }
+
+    return 0.0;
+}
+
 // Get state of node for a duration from scheduled transmissions list
 bool Application::mmw_getStateAt(double time, double duration, int node){
     // Check if node is known to be scheduled
@@ -411,12 +448,12 @@ bool Application::mmw_getStateAt(double time, double duration, int node){
         bool i_direction = std::get<2>(i_info);
 
         // Check if starttime is in this scheduled transmission
-        if(time>=i_starttime && time<=i_starttime+i_duration){
+        if(time>=i_starttime && time<i_starttime+i_duration){
             // Start time collides with scheduled moment
             return true;
         }
         // Check if end time is in this scheduled transmission
-        if(time+duration>=i_starttime && time+duration<=i_starttime+i_duration){
+        if(time+duration>=i_starttime && time+duration<i_starttime+i_duration){
             // End time collides with scheduled moment
             return true;
         }

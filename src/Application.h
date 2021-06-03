@@ -61,8 +61,6 @@ private:
     // Non scheduled transmissions
     // txer, [<rxer, duration>]
     std::unordered_map<int, std::vector<std::pair<int, double>>> mmw_unscheduled_rts;
-    // rxer, [<txer, duration>]
-    std::unordered_map<int, std::vector<std::pair<int, double>>> mmw_unscheduled_cts;
 
     // DEBUG
     bool db_oneshotTransmission = true;
@@ -113,6 +111,8 @@ private:
     bool mmw_getStateAt(double time, double duration, int node);
     void mmw_schedule(int node, double starttime, int othernode, double duration, bool direction);
     void mmw_unschedule(int node, int othernode);
+
+    double mmw_findTimeSlot(int txer, double duration);
 };
 
 #endif
