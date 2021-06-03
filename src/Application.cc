@@ -64,6 +64,13 @@ void Application::startApplication(){
 void Application::stopApplication(){
 }
 
+void Application::finish(){
+    EV_INFO << "log_rx_rejects = " << log_rx_rejects << std::endl;
+    EV_INFO << "log_rx_success = " << log_rx_success << std::endl;
+    EV_INFO << "log_tx_rejects = " << log_tx_rejects << std::endl;
+    EV_INFO << "log_tx_success = " << log_tx_success << std::endl;
+}
+
 void Application::processPacket(std::shared_ptr<inet::Packet> pk){
     auto contentChunk = pk->peekAtFront<VeinsInetSampleMessage>();
     std::string content = contentChunk->getRoadId();
@@ -275,60 +282,69 @@ void Application::showLineTimed(double x1, double y1, double x2, double y2, cons
     timerManager->create(veins::TimerSpecification(callback).oneshotIn(time));
 }
 
+// ---------------------
+// mmWave data functions
+// ---------------------
+
 bool Application::startTransmissionRx(int txer, int packets, int bytesPerPacket, double time, Coord txPos){
-    if(!mmw_cur_rxing){
-        mmw_cur_tx = txer;
-        mmw_cur_rxing = true;
-        return true;
-    }
-    return false;
+    // if(!mmw_cur_rxing){
+    //     mmw_cur_tx = txer;
+    //     mmw_cur_rxing = true;
+    //     return true;
+    // }
+    // log_rx_rejects++;
+    // return false;
 }
 
 bool Application::endTransmissionRx(){
-    mmw_cur_rxing = false;
-    return true;
+    // mmw_cur_rxing = false;
+    // log_rx_success++;
+    // return true;
 }
 
 void Application::startTransmissionTx(){
-    // Get first transmission from list and delete it
-    int rxer = -1;
-    double time = +1.0/0.0;
-    int i = 0;
-    int rxer_i = 0;
-    for(auto & ii : mmw_outgoing_scheduled){
-        if(ii.second<time){
-            time = ii.second;
-            rxer = ii.first;
-            rxer_i = i;
-        }
-        i++;
-    }
-    mmw_outgoing_scheduled.erase(mmw_outgoing_scheduled.begin() + rxer_i);
+    // // Get first transmission from list and delete it
+    // int rxer = -1;
+    // double time = +1.0/0.0;
+    // int i = 0;
+    // int rxer_i = 0;
+    // for(auto & ii : mmw_outgoing_scheduled){
+    //     if(ii.second<time){
+    //         time = ii.second;
+    //         rxer = ii.first;
+    //         rxer_i = i;
+    //     }
+    //     i++;
+    // }
+    // mmw_outgoing_scheduled.erase(mmw_outgoing_scheduled.begin() + rxer_i);
 
-    EV_INFO << "Transmit mmWave data to " << rxer << std::endl;
+    // auto * app = getAppFromId(rxer);
+    // bool successful = app->startTransmissionRx(ID, nrPackets, nrBytesPerPacket, dataExchangeInterval, getPos());
+    // if(successful && !mmw_cur_txing){
+    //     EV_INFO << "Transmit mmWave data to " << rxer << std::endl;
 
-    auto * app = getAppFromId(rxer);
-    bool successful = app->startTransmissionRx(ID, nrPackets, nrBytesPerPacket, dataExchangeInterval, getPos());
-    if(successful){
-        Coord txPos = getPos();
-        Coord rxPos = app->getPos();
-        showLineTimed(rxPos.x, rxPos.y, txPos.x, txPos.y, "purple", 4, dataExchangeInterval);
+    //     Coord txPos = getPos();
+    //     Coord rxPos = app->getPos();
+    //     showLineTimed(rxPos.x, rxPos.y, txPos.x, txPos.y, "purple", 4, dataExchangeInterval);
 
-        // Schedule end of transmission
-        mmw_cur_rx = rxer;
-        mmw_cur_txing = true;
+    //     // Schedule end of transmission
+    //     mmw_cur_rx = rxer;
+    //     mmw_cur_txing = true;
 
-        std::function<void()> callback = std::bind(&Application::endTransmissionTx, this);
-        timerManager->create(veins::TimerSpecification(callback).oneshotIn(dataExchangeInterval));
-    }else{
-        EV_ERROR << "Scheduled transmission failed: antenna's not directed to each other!" << std::endl;
-    }
+    //     std::function<void()> callback = std::bind(&Application::endTransmissionTx, this);
+    //     timerManager->create(veins::TimerSpecification(callback).oneshotIn(dataExchangeInterval));
+    // }else{
+    //     EV_ERROR << "Scheduled transmission failed: antenna's not directed to each other!" << std::endl;
+    //     log_tx_rejects++;
+    // }
 }
 
 void Application::endTransmissionTx(){
-    mmw_cur_txing = false;
-    auto * app = getAppFromId(mmw_cur_rx);
-    app->endTransmissionTx();
+    // EV_INFO << "End transmission mmWave data to " << mmw_cur_rx << std::endl;
+    // mmw_cur_txing = false;
+    // log_tx_success++;
+    // auto * app = getAppFromId(mmw_cur_rx);
+    // app->endTransmissionRx();
 }
 
 // --------------------
@@ -380,19 +396,45 @@ void Application::mmw_recv_cts(int txer, std::vector<double> & delays, std::vect
             EV_INFO << "Schedule transmission in " << simTime() + del << " (now it is " << simTime() << " )" << std::endl;
 
             // Schedule transmission
-            mmw_outgoing_scheduled.push_back(std::make_pair(txer, simTime().dbl() + del));
+            mmw_outgoing_scheduled[simTime()+delay] = std::make_pair(txer, dataExchangeInterval));
             std::function<void()> callback = std::bind(&Application::startTransmissionTx, this);
             timerManager->create(veins::TimerSpecification(callback).oneshotIn(del));
         }
     }else{
         // NEED TO USE DATA FOR SCHEDULING
+        for(int i=0; i<delays.size(); i++){
+            // Check if there's an RTS found for this CTS
+            if(mmw_ogt_rxers.count(rxers[i])>0){
+                // There is an RTS found
+                // Store in ongoing transmissions list (ogt scheduled)
+                double starttime = simTime().dbl() + delays[i];
+
+                // Store with txer as txer
+                // Check if txer is already known
+                if(mmw_ogt_scheduled_tx.count(rxers[i])<=0){
+                    // No: create entry
+                    mmw_ogt_scheduled_tx[rxers[i]] = std::vector<std::pair<int, double>>();
+                }
+                mmw_ogt_scheduled_tx[rxers[i]].push_back(std::make_pair(txer, starttime));
+
+                // Store with rxer as rxer
+                // Check if rxer is known
+                if(mmw_ogt_scheduled_rx.count(txer)<=0){
+                    // No: create entry
+                    mmw_ogt_scheduled_rx[txer] = std::vector<std::pair<int, double>>();
+                }
+                mmw_ogt_scheduled_tx[txer].push_back(std::make_pair(rxers[i], starttime));
+
+                EV_INFO << "Received CTS means transmission scheduled: " << rxers[i] << "->" << txer << " at " << starttime << std::endl;
+            }
+        }
     }
 }
 
 // This function is called when its sending an RTS
 void Application::mmw_send_rts(){
     rts_rxNodes = neighbors;
-    rts_transmissionDuration = 0.050;
+    rts_transmissionDuration = dataExchangeInterval;
 }
 
 // This function is called when its sending a CTS
@@ -404,9 +446,22 @@ void Application::mmw_send_cts(){
     for(auto & tr : mmw_todo){
         int rxer = tr.first;
         double duration = tr.second;
+        double delay = 0.0;
+
+        // Check for usable time frame
+        // Need to search for free time with txer as txer AND txer as rxer AND own free time
+        while(true){
+            double t = simTime();
+
+            int a = 
+
+        }
 
         cts_rxNodes.push_back(rxer);
-        cts_delays.push_back(0.0);
+        cts_delays.push_back(delay);
+
+        // Add to scheduled incomming
+        mmw_incomming_scheduled[simTime().dbl()+delay] = rxer;
     }
 
     mmw_todo.clear();

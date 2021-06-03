@@ -79,6 +79,7 @@ void StaticApplication::handleCrashOperation(LifecycleOperation* operation){
 }
 
 void StaticApplication::finish(){
+    app->finish();
     ApplicationBase::finish();
 }
 

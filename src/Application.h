@@ -16,6 +16,7 @@ using namespace omnetpp;
 #include <memory>
 #include <vector>
 #include <unordered_map>
+#include <map>
 #include <utility>
 
 class Application{
@@ -51,14 +52,29 @@ private:
 
     // Scheduling
     // ----------
-    // Ongoing transmissions
+
+    // Non scheduled ongoing transmissions, stored when receiving RTS
+    // txer, [rxer]
     std::unordered_map<int, std::vector<int>> mmw_ogt_rxers;
+    // txer, duration
     std::unordered_map<int, double> mmw_ogt_dur;
+    // txer, starttime
     std::unordered_map<int, double> mmw_ogt_startime;
-    std::unordered_map<int, std::vector<std::pair<int, double>>> mmw_ogt_scheduled;
+
+    // Ongoing transmissions, stored when receiving CTS
+    // txer, [<rxer, starttime>]
+    std::unordered_map<int, std::vector<std::pair<int, double>>> mmw_ogt_scheduled_tx;
+    // rxer, [<txer, starttime>]
+    std::unordered_map<int, std::vector<std::pair<int, double>>> mmw_ogt_scheduled_rx;
+
     // My transmissions
+    // To receiving transmissions NOT SCHEDULED: rxer, duration
     std::unordered_map<int, double> mmw_todo;
-    std::vector<std::pair<int, double>> mmw_outgoing_scheduled;
+    // Scheduled outgoing transmissions: starttime, <rxer, duration>
+    std::map<double, std::pair<int, double>> mmw_outgoing_scheduled;
+    // Scheduled incomming transmissions: starttime, <txer, duration>
+    std::map<double, std::pair<int, double>> mmw_incomming_scheduled;
+
     // Current transmission
     int mmw_cur_rx;
     bool mmw_cur_txing = false;
@@ -70,11 +86,20 @@ private:
     bool db_oneshotTransmission = true;
 
 public:
+    // LOGGING
+    // -------
+    int log_rx_rejects = 0;
+    int log_tx_rejects = 0;
+    int log_rx_success = 0;
+    int log_tx_success = 0;
+
+public:
     Application(inet::ApplicationBase * parent, std::function<void(std::unique_ptr<inet::Packet>)> sendPacket, veins::TimerManager * timerManager, bool staticApplication);
     virtual ~Application();
 
     void startApplication();
     void stopApplication();
+    void finish();
 
     void processPacket(std::shared_ptr<inet::Packet> pk);
 

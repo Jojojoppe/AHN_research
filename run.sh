@@ -1,8 +1,11 @@
 #!/bin/bash
 
+OMNETPP_BIN=/opt/omnetpp/bin
 INET4_3_PROJ=/opt/omnetpp/samples/inet4.3
 VEINS_PROJ=~/Files/Study/MSc/2020-2021/2B/AHN/veins
 D=
+
+PATH=$OMNETPP_BIN:$PATH
 
 opp_makemake -f --deep \
     -KINET4_3_PROJ=$INET4_3_PROJ \
@@ -15,7 +18,7 @@ opp_makemake -f --deep \
     -L$INET4_3_PROJ/src \
     -L$VEINS_PROJ/src \
     -lINET$D \
-    -lveins$D
+    -lveins$D 
 
 CURDIR=$(pwd)
 

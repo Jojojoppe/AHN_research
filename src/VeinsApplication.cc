@@ -53,3 +53,8 @@ bool VeinsApplication::stopApplication(){
 void VeinsApplication::processPacket(std::shared_ptr<inet::Packet> pk){
     app->processPacket(pk);
 }
+
+void VeinsApplication::finish(){
+    app->finish();
+    ApplicationBase::finish();
+}

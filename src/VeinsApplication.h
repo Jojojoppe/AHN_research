@@ -28,6 +28,7 @@ class VEINS_INET_API VeinsApplication : public veins::VeinsInetApplicationBase{
 protected:
     virtual bool startApplication() override;
     virtual bool stopApplication() override;
+    virtual void finish() override;
     virtual void processPacket(std::shared_ptr<inet::Packet> pk) override;
 
 public:
