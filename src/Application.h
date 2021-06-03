@@ -18,6 +18,7 @@ using namespace omnetpp;
 #include <unordered_map>
 #include <map>
 #include <utility>
+#include <tuple>
 
 class Application{
 private:    
@@ -53,34 +54,15 @@ private:
     // Scheduling
     // ----------
 
-    // Non scheduled ongoing transmissions, stored when receiving RTS
-    // txer, [rxer]
-    std::unordered_map<int, std::vector<int>> mmw_ogt_rxers;
-    // txer, duration
-    std::unordered_map<int, double> mmw_ogt_dur;
-    // txer, starttime
-    std::unordered_map<int, double> mmw_ogt_startime;
+    // Scheduled transmissions
+    // rxer/txer, {starttime, <rxer/txer, duration, direction(true for outgoing)>}
+    std::unordered_map<int, std::map<double, std::tuple<int, double, bool>>> mmw_scheduled;
 
-    // Ongoing transmissions, stored when receiving CTS
-    // txer, [<rxer, starttime>]
-    std::unordered_map<int, std::vector<std::pair<int, double>>> mmw_ogt_scheduled_tx;
-    // rxer, [<txer, starttime>]
-    std::unordered_map<int, std::vector<std::pair<int, double>>> mmw_ogt_scheduled_rx;
-
-    // My transmissions
-    // To receiving transmissions NOT SCHEDULED: rxer, duration
-    std::unordered_map<int, double> mmw_todo;
-    // Scheduled outgoing transmissions: starttime, <rxer, duration>
-    std::map<double, std::pair<int, double>> mmw_outgoing_scheduled;
-    // Scheduled incomming transmissions: starttime, <txer, duration>
-    std::map<double, std::pair<int, double>> mmw_incomming_scheduled;
-
-    // Current transmission
-    int mmw_cur_rx;
-    bool mmw_cur_txing = false;
-    int mmw_cur_tx;
-    bool mmw_cur_rxing = false;
-    // ----------
+    // Non scheduled transmissions
+    // txer, [<rxer, duration>]
+    std::unordered_map<int, std::vector<std::pair<int, double>>> mmw_unscheduled_rts;
+    // rxer, [<txer, duration>]
+    std::unordered_map<int, std::vector<std::pair<int, double>>> mmw_unscheduled_cts;
 
     // DEBUG
     bool db_oneshotTransmission = true;
@@ -118,8 +100,8 @@ private:
     void deleteLine(cPolylineFigure * line);
     void showLineTimed(double x1, double y1, double x2, double y2, const char * color, double width, double time);
 
-    void startTransmissionTx();
-    void endTransmissionTx();
+    void startTransmissionTx(int rxer);
+    void endTransmissionTx(int rxer);
 
     // mmWave MAC functions
     void mmw_loop();
@@ -127,6 +109,10 @@ private:
     void mmw_recv_cts(int txer, std::vector<double> & delays, std::vector<int> & rxers);
     void mmw_send_rts();
     void mmw_send_cts();
+
+    bool mmw_getStateAt(double time, double duration, int node);
+    void mmw_schedule(int node, double starttime, int othernode, double duration, bool direction);
+    void mmw_unschedule(int node, int othernode);
 };
 
 #endif
