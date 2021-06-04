@@ -61,6 +61,17 @@ void Application::startApplication(){
     std::ostringstream appname;
     appname << ID;
     parent->getParentModule()->setName(appname.str().c_str());
+
+    db_txcount = 0;
+    log_rx_rejects = 0;
+    log_tx_rejects = 0;
+    log_rx_success = 0;
+    log_tx_success = 0;
+    log_rx_data = 0;
+    log_tx_data = 0;
+    db_delays.clear();
+    db_destinations.clear();
+    db_oneshotTransmission = true;
 }
 
 void Application::stopApplication(){
@@ -79,6 +90,21 @@ void Application::finish(){
     EV_INFO << "delays = [";
     for(auto & d : db_delays) EV_INFO << d.first << ":" << d.second << ",";
     EV_INFO << "]" << std::endl;
+
+    // Output scalars
+    // --------------
+    std::string prefix("txCount_");
+    prefix += std::to_string((int)parent->getParentModule()->getAncestorPar("txCount"));
+
+    // Delays
+    if(db_delays.size()>0){
+        int i=0;
+        for(auto & d : db_delays){
+            std::string scalarname = prefix + "_delays_" + std::to_string(i);
+            parent->recordScalar(scalarname.c_str(), d.first);
+            i++;
+        }
+    }
 }
 
 void Application::processPacket(std::shared_ptr<inet::Packet> pk){
@@ -350,7 +376,7 @@ void Application::endTransmissionTx(int rxer){
     antennaBusy = false;
     log_tx_success++;
     log_tx_data += nrPackets*nrBytesPerPacket;
-    db_delays[rxer] = simTime().dbl() - db_starttime;
+    db_delays[simTime().dbl() - db_starttime] = rxer;
 
     auto * app = getAppFromId(rxer);
     app->endTransmissionRx(ID);
@@ -366,17 +392,10 @@ void Application::mmw_loop(){
     std::function<void()> callback = std::bind(&Application::mmw_loop, this);
     timerManager->create(veins::TimerSpecification(callback).oneshotIn(parent->getParentModule()->getAncestorPar("mmwLoopTime")));
 
-    // DEBUG
-    // Let node0 start transmission once when 4 neighbors are there
-    //if(nodeName=="52" && neighbors.size()>=4 && db_oneshotTransmission){
-    // if((nodeName=="52" || nodeName=="114") && neighbors.size()>=4 && db_oneshotTransmission){
-    if(neighbors.size()>=(int)parent->getParentModule()->getAncestorPar("txDstCount") && db_txcount<(int)parent->getParentModule()->getAncestorPar("txCount")){
+    if(neighbors.size()>=(int)parent->getParentModule()->getAncestorPar("txDstCount") && db_txcount<(int)parent->getParentModule()->getAncestorPar("txCount") && db_oneshotTransmission){
         db_oneshotTransmission = false;
         db_starttime = simTime().dbl();
-        for(auto & n : neighbors){
-            db_delays[n] = +1.0/0.0;
-        }
-        db_destinations = neighbors;
+        db_destinations = std::vector<int>(neighbors.begin(), neighbors.begin()+(int)parent->getParentModule()->getAncestorPar("txDstCount"));
         db_txcount++;
 
         setColor("red");

@@ -4,6 +4,7 @@ wireless_dbg
 *.o
 *.d
 
+*.csv
 
 simulations/static/results
 simulations/static/log.txt

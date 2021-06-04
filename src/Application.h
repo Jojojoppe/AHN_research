@@ -68,7 +68,7 @@ private:
     // DEBUG
     bool db_oneshotTransmission = true;
     double db_starttime;
-    std::unordered_map<int, double> db_delays;
+    std::map<double, int> db_delays;
     std::vector<int> db_destinations;
     static int db_txcount;
 
