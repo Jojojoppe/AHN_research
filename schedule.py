@@ -10,6 +10,8 @@ scalars = results[results.type=='scalar']
 
 beacons = {}
 transmissions = {}
+first_time = {}
+last_time = {}
 
 for row in scalars.itertuples():
     # Get module
@@ -24,6 +26,8 @@ for row in scalars.itertuples():
     if run not in beacons:
         beacons[run] = {}
         transmissions[run] = {}
+        first_time[run] = None
+        last_time[run] = 0.0
 
     if tp=="beacon":
         beacon = row.name.split("_")[2]
@@ -34,6 +38,8 @@ for row in scalars.itertuples():
         elif beacon_type=="RTS":
             beacon_rx = beacon.split(" ")[9]
             beacon_time = beacon.split(" ")[11]
+            if first_time[run] is None:
+                first_time[run] = time
         else:
             beacon_rx = beacon.split(" ")[9]
             beacon_time = beacon.split(" ")[11]
@@ -63,6 +69,8 @@ for row in scalars.itertuples():
 
         transmissions[run][module][0] += [[float(time), float(time)+float(duration)]]
         transmissions[run][module][1] += [s]
+
+        last_time[run] = float(time) + float(duration)
 
 
 beacons_bkp = beacons
@@ -122,5 +130,7 @@ for tri in range(len(beacons_bkp)):
     ax.set_ylabel("node")
 
     ax.set_title('Schedule for run %s'%tri);
+
+    ax.set_xlim([first_time[tri]-0.02, last_time[tri]+0.02])
 
     plt.show()
