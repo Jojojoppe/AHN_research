@@ -36,7 +36,12 @@ cd $CURDIR && \
     make -j$THREADS all && \
 
 cd simulations/static && \
-../../wireless -m \
+# ../../wireless -m \
+#     -n ..:../../src:$INET4_3_PROJ/src:$VEINS_PROJ/examples/veins:$VEINS_PROJ/src/veins \
+#     --image-path=$INET4_3_PROJ/images:$VEINS_PROJ/images \
+#     -l $INET4_3_PROJ/src/INET -l $VEINS_PROJ/src/veins omnetpp.ini \
+#     -u $U && \
+opp_runall -j $THREADS ../../wireless -m \
     -n ..:../../src:$INET4_3_PROJ/src:$VEINS_PROJ/examples/veins:$VEINS_PROJ/src/veins \
     --image-path=$INET4_3_PROJ/images:$VEINS_PROJ/images \
     -l $INET4_3_PROJ/src/INET -l $VEINS_PROJ/src/veins omnetpp.ini \
