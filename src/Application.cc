@@ -271,6 +271,10 @@ void Application::beaconCallback(){
     std::unique_ptr<Packet> packet = std::make_unique<Packet>(std::string("beacon").c_str());
     packet->insertAtBack(payload);
     sendPacket(std::move(packet));
+
+    // Log beacon
+    std::string logname = "schedule_beacon_" + beaconContent.str();
+    parent->recordScalar(logname.c_str(), simTime().dbl());
 }
 
 Application * Application::getAppFromId(int id){
@@ -339,6 +343,11 @@ bool Application::startTransmissionRx(int txer){
     }
     antennaBusy = true;
     antennaDirected = txer;
+
+    // Log transmission
+    std::string logname = "schedule_rx_" + std::to_string(txer) + "_" + std::to_string(dataExchangeInterval);
+    parent->recordScalar(logname.c_str(), simTime().dbl());
+
     return true;
 }
 
@@ -367,6 +376,10 @@ void Application::startTransmissionTx(int rxer){
         Coord txPos = getPos();
         Coord rxPos = app->getPos();
         showLineTimed(rxPos.x, rxPos.y, txPos.x, txPos.y, "purple", 8, dataExchangeInterval);
+
+        // Log transmission
+        std::string logname = "schedule_tx_" + std::to_string(rxer) + "_" + std::to_string(dataExchangeInterval);
+        parent->recordScalar(logname.c_str(), simTime().dbl());
     }
 }
 

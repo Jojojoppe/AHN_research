@@ -47,11 +47,21 @@ opp_runall -j $THREADS ../../wireless -m \
     -l $INET4_3_PROJ/src/INET -l $VEINS_PROJ/src/veins omnetpp.ini \
     -u $U && \
 
-cd $CURDIR && \
-    cd simulations/static/results && \
-    opp_scavetool x *.sca \
-        -f 'name =~ **delays**' \
-        -o ../../../res.csv \
 
 cd $CURDIR && \
-    python process.py
+    cd simulations/static/results && \
+#     opp_scavetool x *.sca \
+#         -f 'name =~ **delays**' \
+#         -o ../../../res.csv \
+    opp_scavetool x *.sca \
+        -f 'name =~ **schedule**' \
+        -o ../../../schedule.csv \
+
+# cd $CURDIR && \
+#     python process.py && \
+
+cd $CURDIR && \
+    python schedule.py && \
+
+
+echo DONE
