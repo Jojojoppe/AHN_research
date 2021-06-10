@@ -50,11 +50,11 @@ void Application::startApplication(){
     // Beacon generation
     // -----------------
     // Get random value between 0 and 1;
-    auto randwait_i = parent->intrand(1000);
-    float randwait = randwait_i/1000.0;
+    auto randwait_i = parent->intrand(10000);
+    float randwait = randwait_i/10000.0;
     // Start beacon sending
     std::function<void()> callback = std::bind(&Application::beaconCallback, this);
-    timerManager->create(veins::TimerSpecification(callback).oneshotIn(randwait*beaconPeriod));
+    timerManager->create(veins::TimerSpecification(callback).oneshotIn(randwait*2*beaconPeriod));
     // -----------------
 
     // Schedule mmw MAC main loop

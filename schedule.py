@@ -77,6 +77,7 @@ beacons_bkp = beacons
 transmissions_bkp = transmissions
 
 for tri in range(len(beacons_bkp)):
+    tri = 1200
     beacons = beacons_bkp[tri]
     transmissions = transmissions_bkp[tri]
 
