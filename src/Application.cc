@@ -24,6 +24,7 @@ using namespace inet;
 using namespace omnetpp;
 
 int Application::db_txcount = 0;
+int Application::log_transmissions_same_time = 0;
 
 Application::Application(inet::ApplicationBase * parent, std::function<void(std::unique_ptr<Packet>)> sendPacket, veins::TimerManager * timerManager, bool staticApplication){
     this->parent = parent;
@@ -36,6 +37,8 @@ Application::Application(inet::ApplicationBase * parent, std::function<void(std:
     dataExchangeInterval = parent->getParentModule()->getAncestorPar("dataExchangeInterval");
     nrPackets = parent->getParentModule()->getAncestorPar("nrPackets");
     nrBytesPerPacket = parent->getParentModule()->getAncestorPar("nrBytesPerPacket");
+    txPacketLoss = parent->getParentModule()->getAncestorPar("txPacketLoss");
+    rxPacketLoss = parent->getParentModule()->getAncestorPar("rxPacketLoss");
     
     this->ID = parent->getId();
 }
@@ -69,6 +72,9 @@ void Application::startApplication(){
     log_tx_success = 0;
     log_rx_data = 0;
     log_tx_data = 0;
+    log_tx_lost = 0;
+    log_rx_lost = 0;
+    log_transmissions_same_time = 0;
     db_delays.clear();
     db_destinations.clear();
     db_oneshotTransmission = true;
@@ -86,6 +92,9 @@ void Application::finish(){
 
     EV_INFO << "log_rx_data = " << log_rx_data << " B" << std::endl;
     EV_INFO << "log_tx_data = " << log_tx_data << " B" << std::endl;
+
+    EV_INFO << "log_tx_lost = " << log_tx_lost << std::endl;
+    EV_INFO << "log_rx_lost = " << log_rx_lost << std::endl;
 
     EV_INFO << "delays = [";
     for(auto & d : db_delays) EV_INFO << d.first << ":" << d.second << ",";
@@ -110,6 +119,15 @@ void Application::finish(){
 void Application::processPacket(std::shared_ptr<inet::Packet> pk){
     auto contentChunk = pk->peekAtFront<VeinsInetSampleMessage>();
     std::string content = contentChunk->getRoadId();
+
+    // Simulate packet loss
+    double r = (float)parent->intrand(1000)/1000.0;
+    if(r<rxPacketLoss){
+        EV_INFO << "RX beacon packet loss" << std::endl;
+        log_rx_lost++;
+
+        return;
+    }
 
     std::istringstream beaconContent(content);
     std::string tmp;
@@ -268,6 +286,15 @@ void Application::beaconCallback(){
     // Set content
     payload->setRoadId(beaconContent.str().c_str());
 
+    // Simulate packet loss
+    double r = (float)parent->intrand(1000)/1000.0;
+    if(r<txPacketLoss){
+        EV_INFO << "TX beacon packet loss" << std::endl;
+        log_tx_lost++;
+
+        return;
+    }
+    
     std::unique_ptr<Packet> packet = std::make_unique<Packet>(std::string("beacon").c_str());
     packet->insertAtBack(payload);
     sendPacket(std::move(packet));
@@ -358,20 +385,22 @@ bool Application::endTransmissionRx(int txer){
     return true;
 }
 
-void Application::startTransmissionTx(int rxer){
+bool Application::startTransmissionTx(int rxer){
     if(antennaBusy){
         EV_ERROR << "Already ongoing transmission! tx_reject!" << std::endl;
         EV_ERROR << "Antenna currently directed to " << antennaDirected << " and cannot be directed to " << rxer << std::endl;
         EV_ERROR << "Current time " << simTime().dbl() << std::endl;
         log_tx_rejects++;
-        return;
+        return false;
     }
+
     auto * app = getAppFromId(rxer);
     if(app->startTransmissionRx(ID)){
         EV_INFO << "Transmit mmWave data to " << rxer << " until " << simTime().dbl() + dataExchangeInterval << std::endl;
 
         antennaBusy = true;
         antennaDirected = rxer;
+        log_transmissions_same_time++;
 
         Coord txPos = getPos();
         Coord rxPos = app->getPos();
@@ -380,7 +409,16 @@ void Application::startTransmissionTx(int rxer){
         // Log transmission
         std::string logname = "schedule_tx_" + std::to_string(rxer) + "_" + std::to_string(dataExchangeInterval);
         parent->recordScalar(logname.c_str(), simTime().dbl());
+
+        parent->recordScalar("transmissions", log_transmissions_same_time);
+
+        // Schedule endTransmissionTx
+        std::function<void()> callback = std::bind(&Application::endTransmissionTx, this, rxer);
+        timerManager->create(veins::TimerSpecification(callback).oneshotIn(dataExchangeInterval));
+
+        return true;
     }
+    return false;
 }
 
 void Application::endTransmissionTx(int rxer){
@@ -390,6 +428,9 @@ void Application::endTransmissionTx(int rxer){
     log_tx_success++;
     log_tx_data += nrPackets*nrBytesPerPacket;
     db_delays[simTime().dbl() - db_starttime] = rxer;
+
+    log_transmissions_same_time--;
+    parent->recordScalar("transmissions", log_transmissions_same_time);
 
     auto * app = getAppFromId(rxer);
     app->endTransmissionRx(ID);
@@ -575,9 +616,4 @@ void Application::mmw_unschedule(int node, int othernode, double starttime, bool
 
     // Remove from scheduled map
     mmw_scheduled[node].erase(starttime);
-
-    // Check if I was sending
-    if(node==ID && direction){
-        endTransmissionTx(othernode);
-    }
 }

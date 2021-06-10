@@ -50,18 +50,24 @@ opp_runall -j $THREADS ../../wireless -m \
 
 cd $CURDIR && \
     cd simulations/static/results && \
-#     opp_scavetool x *.sca \
-#         -f 'name =~ **delays**' \
-#         -o ../../../res.csv \
+    opp_scavetool x *.sca \
+         -f 'name =~ **delays**' \
+         -o ../../../res.csv && \
     opp_scavetool x *.sca \
         -f 'name =~ **schedule**' \
-        -o ../../../schedule.csv \
-
-# cd $CURDIR && \
-#     python process.py && \
+        -o ../../../schedule.csv && \
+    opp_scavetool x *.sca \
+        -f 'name =~ transmissions' \
+        -o ../../../trans.csv && \
 
 cd $CURDIR && \
-    python schedule.py && \
+    python process.py && \
+
+#cd $CURDIR && \
+#    python schedule.py && \
+
+#cd $CURDIR && \
+#    python transmissions.py && \
 
 
 echo DONE

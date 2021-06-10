@@ -33,6 +33,8 @@ private:
     double dataExchangeInterval;
     int nrPackets;
     int nrBytesPerPacket;
+    double txPacketLoss;
+    double rxPacketLoss;
 
     // Important constants
     int ID;
@@ -83,6 +85,11 @@ public:
     int log_tx_success = 0;
     long log_tx_data = 0;
 
+    int log_tx_lost = 0;
+    int log_rx_lost = 0;
+
+    static int log_transmissions_same_time;
+
 public:
     Application(inet::ApplicationBase * parent, std::function<void(std::unique_ptr<inet::Packet>)> sendPacket, veins::TimerManager * timerManager, bool staticApplication);
     virtual ~Application();
@@ -110,7 +117,7 @@ private:
 
     void setColor(const char * color);
 
-    void startTransmissionTx(int rxer);
+    bool startTransmissionTx(int rxer);
     void endTransmissionTx(int rxer);
 
     // mmWave MAC functions

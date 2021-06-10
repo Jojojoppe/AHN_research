@@ -32,6 +32,8 @@ network Scenario{
         double mmwLoopTime = default(0.1);
         int txCount = default(1);
         int txDstCount = default(4);
+        double txPacketLoss = default(0.00);
+        double rxPacketLoss = default(0.00);
     	
     submodules:
         radioMedium: Ieee80211DimensionalRadioMedium {
