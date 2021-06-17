@@ -90,7 +90,7 @@ ax = fig.add_axes([0.1, 0.1, 0.8, 0.8])
 ax.plot(pklossPf, line, 'rs-')
 
 ax.set_xlabel('Packet loss ratio');
-ax.set_ylabel('Number of retransmissions');
+ax.set_ylabel('Number of RTS beacons');
 
 ax.set_yticks([0, 1, 2, 3, 4, 5, 6])
 ax.set_yticklabels(['0', '1', '2', '3', '4', '5', '6'])
