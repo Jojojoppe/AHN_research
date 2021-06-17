@@ -1,8 +1,8 @@
 #!/bin/bash
 
-OMNETPP_BIN=/opt/omnetpp/bin
-INET4_3_PROJ=/opt/omnetpp/samples/inet4.3
-VEINS_PROJ=~/Files/Study/MSc/2020-2021/2B/AHN/veins
+OMNETPP_BIN=/media/ssd/packages/opmnetpp/bin
+INET4_3_PROJ=/media/ssd/packages/omnetpp/samples/inet/
+VEINS_PROJ=/media/ssd/files/Study/MSc/2020-2021/2B/AHN/veins
 D=
 U=Qtenv
 THREADS=6
