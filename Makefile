@@ -2,7 +2,7 @@
 # OMNeT++/OMNEST Makefile for wireless
 #
 # This file was generated with the command:
-#  opp_makemake -f --deep -KINET4_3_PROJ=/media/ssd/packages/omnetpp/samples/inet/ -KVEINS_PROJ=/media/ssd/files/Study/MSc/2020-2021/2B/AHN/veins -DINET_IMPORT -DVEINS_IMPORT -I/media/ssd/packages/omnetpp/samples/inet//src -I/media/ssd/files/Study/MSc/2020-2021/2B/AHN/veins/src -Isrc -L/media/ssd/packages/omnetpp/samples/inet//src -L/media/ssd/files/Study/MSc/2020-2021/2B/AHN/veins/src -lINET -lveins
+#  opp_makemake -f --deep -KINET4_3_PROJ=/media/ssd/packages/omnetpp/inet/ -KVEINS_PROJ=/media/ssd/packages/veins -DINET_IMPORT -DVEINS_IMPORT -I/media/ssd/packages/omnetpp/inet//src -I/media/ssd/packages/veins/src -Isrc -L/media/ssd/packages/omnetpp/inet//src -L/media/ssd/packages/veins/src -lINET -lveins
 #
 
 # Name of target to be created (-o option)
@@ -19,13 +19,13 @@ USERIF_LIBS = $(ALL_ENV_LIBS) # that is, $(QTENV_LIBS) $(CMDENV_LIBS)
 #USERIF_LIBS = $(QTENV_LIBS)
 
 # C++ include paths (with -I)
-INCLUDE_PATH = -I/media/ssd/packages/omnetpp/samples/inet/src -I/media/ssd/files/Study/MSc/2020-2021/2B/AHN/veins/src -Isrc
+INCLUDE_PATH = -I/media/ssd/packages/omnetpp/inet/src -I/media/ssd/packages/veins/src -Isrc
 
 # Additional object and library files to link with
 EXTRA_OBJS =
 
 # Additional libraries (-L, -l options)
-LIBS = $(LDFLAG_LIBPATH)/media/ssd/packages/omnetpp/samples/inet/src $(LDFLAG_LIBPATH)/media/ssd/files/Study/MSc/2020-2021/2B/AHN/veins/src  -lINET -lveins
+LIBS = $(LDFLAG_LIBPATH)/media/ssd/packages/omnetpp/inet/src $(LDFLAG_LIBPATH)/media/ssd/packages/veins/src  -lINET -lveins
 
 # Output directory
 PROJECT_OUTPUT_DIR = out
@@ -51,8 +51,8 @@ MSGFILES = \
 SMFILES =
 
 # Other makefile variables (-K)
-INET4_3_PROJ=/media/ssd/packages/omnetpp/samples/inet/
-VEINS_PROJ=/media/ssd/files/Study/MSc/2020-2021/2B/AHN/veins
+INET4_3_PROJ=/media/ssd/packages/omnetpp/inet/
+VEINS_PROJ=/media/ssd/packages/veins
 
 #------------------------------------------------------------------------------
 
@@ -77,7 +77,7 @@ include $(CONFIGFILE)
 # Simulation kernel and user interface libraries
 OMNETPP_LIBS = $(OPPMAIN_LIB) $(USERIF_LIBS) $(KERNEL_LIBS) $(SYS_LIBS)
 ifneq ($(PLATFORM),win32.x86_64)
-LIBS += -Wl,-rpath,$(abspath /media/ssd/packages/omnetpp/samples/inet/src) -Wl,-rpath,$(abspath /media/ssd/files/Study/MSc/2020-2021/2B/AHN/veins/src)
+LIBS += -Wl,-rpath,$(abspath /media/ssd/packages/omnetpp/inet/src) -Wl,-rpath,$(abspath /media/ssd/packages/veins/src)
 endif
 
 COPTS = $(CFLAGS) $(IMPORT_DEFINES) -DINET_IMPORT -DVEINS_IMPORT $(INCLUDE_PATH) -I$(OMNETPP_INCL_DIR)

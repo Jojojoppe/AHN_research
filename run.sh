@@ -1,8 +1,8 @@
 #!/bin/bash
 
 OMNETPP_BIN=/media/ssd/packages/opmnetpp/bin
-INET4_3_PROJ=/media/ssd/packages/omnetpp/samples/inet/
-VEINS_PROJ=/media/ssd/files/Study/MSc/2020-2021/2B/AHN/veins
+INET4_3_PROJ=/media/ssd/packages/omnetpp/inet/
+VEINS_PROJ=/media/ssd/packages/veins
 D=
 U=Qtenv
 THREADS=6
@@ -60,8 +60,8 @@ cd $CURDIR && \
         -f 'name =~ transmissions' \
         -o ../../../trans.csv && \
 
-cd $CURDIR && \
-    python process.py && \
+#cd $CURDIR && \
+#    python process.py && \
 
 #cd $CURDIR && \
 #    python schedule.py && \

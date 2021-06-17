@@ -1,5 +1,5 @@
 //
-// Generated file, do not edit! Created by nedtool 6.0 from veins_inet/VeinsInetSampleMessage.msg.
+// Generated file, do not edit! Created by nedtool 6.0 from src/veins_inet/VeinsInetSampleMessage.msg.
 //
 
 // Disable warnings about unused variables, empty switch stmts, etc:
@@ -186,7 +186,7 @@ inline std::ostream& operator<<(std::ostream& out,const std::shared_ptr<T>& t) {
 // Template rule which fires if a struct or class doesn't have operator<<
 template<typename T>
 inline typename std::enable_if<!std::is_base_of<omnetpp::cObject, T>::value, std::ostream&>::type
-operator<<(std::ostream& out,const T&) {const char *s = omnetpp::opp_typename(typeid(T)); out.put('<'); out.write(s, strlen(s)); out.put('>'); return out;}
+operator<<(std::ostream& out,const T&) {return out.operator<<(omnetpp::opp_typename(typeid(T)));}
 
 // operator<< for std::vector<T>
 template<typename T, typename A>

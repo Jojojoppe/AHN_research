@@ -1,5 +1,5 @@
 //
-// Generated file, do not edit! Created by nedtool 6.0 from veins_inet/VeinsInetSampleMessage.msg.
+// Generated file, do not edit! Created by nedtool 6.0 from src/veins_inet/VeinsInetSampleMessage.msg.
 //
 
 #ifndef __VEINSINETSAMPLEMESSAGE_M_H
@@ -24,7 +24,7 @@ class VeinsInetSampleMessage;
 #include "inet/common/packet/chunk/Chunk_m.h" // import inet.common.packet.chunk.Chunk
 
 /**
- * Class generated from <tt>veins_inet/VeinsInetSampleMessage.msg:34</tt> by nedtool.
+ * Class generated from <tt>src/veins_inet/VeinsInetSampleMessage.msg:34</tt> by nedtool.
  * <pre>
  * //
  * // Example message definition
