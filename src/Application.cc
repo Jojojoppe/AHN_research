@@ -39,6 +39,7 @@ Application::Application(inet::ApplicationBase * parent, std::function<void(std:
     nrBytesPerPacket = parent->getParentModule()->getAncestorPar("nrBytesPerPacket");
     txPacketLoss = parent->getParentModule()->getAncestorPar("txPacketLoss");
     rxPacketLoss = parent->getParentModule()->getAncestorPar("rxPacketLoss");
+    retry = parent->getParentModule()->getAncestorPar("retry");
     
     this->ID = parent->getId();
 }

@@ -35,6 +35,7 @@ private:
     int nrBytesPerPacket;
     double txPacketLoss;
     double rxPacketLoss;
+    bool retry;
 
     // Important constants
     int ID;

@@ -59,6 +59,9 @@ cd $CURDIR && \
     opp_scavetool x *.sca \
         -f 'name =~ transmissions' \
         -o ../../../trans.csv && \
+    opp_scavetool x *.sca \
+        -f 'name =~ **log**' \
+        -o ../../../logres.csv && \
 
 #cd $CURDIR && \
 #    python process.py && \

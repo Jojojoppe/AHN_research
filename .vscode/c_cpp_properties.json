@@ -8,7 +8,7 @@
                 "/usr/include/c++/11.1.0/**",
                 "/media/ssd/packages/omnetpp/include/**",
                 "/media/ssd/packages/omnetpp/inet/src/**",
-                "/media/ssd/files/Study/MSc/2020-2021/2B/AHN/veins/src/veins/**"
+                "/media/ssd/packages/veins/src/veins/**"
             ],
             "defines": [
             ],

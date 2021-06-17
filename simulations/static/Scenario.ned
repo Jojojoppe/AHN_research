@@ -34,6 +34,7 @@ network Scenario{
         int txDstCount = default(4);
         double txPacketLoss = default(0.00);
         double rxPacketLoss = default(0.00);
+        bool retry = default(false);
     	
     submodules:
         radioMedium: Ieee80211DimensionalRadioMedium {
