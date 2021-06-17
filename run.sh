@@ -66,8 +66,8 @@ cd $CURDIR && \
 #cd $CURDIR && \
 #    python process.py && \
 
-#cd $CURDIR && \
-#    python schedule.py && \
+# cd $CURDIR && \
+#     python schedule.py && \
 
 #cd $CURDIR && \
 #    python transmissions.py && \

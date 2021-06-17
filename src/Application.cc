@@ -454,6 +454,20 @@ void Application::mmw_loop(){
     std::function<void()> callback = std::bind(&Application::mmw_loop, this);
     timerManager->create(veins::TimerSpecification(callback).oneshotIn(parent->getParentModule()->getAncestorPar("mmwLoopTime")));
 
+    if(db_started && simTime().dbl()-db_sendRTSstarttime > 4*beaconPeriod){
+        // Start retransmission after 4 beacon periods
+        EV_ERROR << "Still in todo list" << std::endl;
+        for(auto & i : db_destinations_todo){
+            EV_ERROR << i << std::endl;
+        }
+
+        if(db_destinations_todo.size()>0){
+            db_destinations = db_destinations_todo;
+            sendRts = true;
+            db_sendRTSstarttime = simTime().dbl();
+        }
+    }
+
     if(neighbors.size()>=(int)parent->getParentModule()->getAncestorPar("txDstCount") && db_txcount<(int)parent->getParentModule()->getAncestorPar("txCount") && db_oneshotTransmission){
         db_oneshotTransmission = false;
         db_starttime = simTime().dbl();
@@ -466,6 +480,10 @@ void Application::mmw_loop(){
 
         // Send RTS
         sendRts = true;
+
+        db_started = true;
+        db_sendRTSstarttime = simTime().dbl();
+        db_destinations_todo = db_destinations;
     }
 }
 
@@ -490,6 +508,13 @@ void Application::mmw_recv_cts(int txer, std::vector<double> & delays, std::vect
         // Schedule transmission
         mmw_schedule(rxers[i], simTime().dbl()+delays[i], txer, dataExchangeInterval, true);
         mmw_schedule(txer, simTime().dbl()+delays[i], rxers[i], dataExchangeInterval, false);
+
+        // Check if for me and still in todo list
+        if(rxers[i]==ID && (std::find(db_destinations_todo.begin(), db_destinations_todo.end(), txer)!=db_destinations_todo.end())){
+            // Remove from todo list
+            auto it = std::find(db_destinations_todo.begin(), db_destinations_todo.end(), txer);
+            db_destinations_todo.erase(it);
+        }
     }
 }
 

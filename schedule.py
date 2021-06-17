@@ -44,7 +44,7 @@ for row in scalars.itertuples():
             beacon_rx = beacon.split(" ")[9]
             beacon_time = beacon.split(" ")[11]
 
-        print("%s\t%s\tbeacon %s %s %s"%(module, time, beacon_type, beacon_rx, beacon_time))
+        # print("%s\t%s\tbeacon %s %s %s"%(module, time, beacon_type, beacon_rx, beacon_time))
         
         if module not in beacons[run]:
             beacons[run][module] = {}
@@ -77,7 +77,6 @@ beacons_bkp = beacons
 transmissions_bkp = transmissions
 
 for tri in range(len(beacons_bkp)):
-    tri = 1200
     beacons = beacons_bkp[tri]
     transmissions = transmissions_bkp[tri]
 

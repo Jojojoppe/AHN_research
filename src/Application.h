@@ -74,6 +74,9 @@ private:
     std::map<double, int> db_delays;
     std::vector<int> db_destinations;
     static int db_txcount;
+    bool db_started = false;
+    double db_sendRTSstarttime;
+    std::vector<int> db_destinations_todo;
 
 public:
     // LOGGING
