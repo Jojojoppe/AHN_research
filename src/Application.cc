@@ -107,11 +107,11 @@ void Application::finish(){
     prefix += std::to_string((int)parent->getParentModule()->getAncestorPar("txCount"));
 
     parent->recordScalar("log_rx_rejects", log_rx_rejects);
-    parent->recordScalar("log_rx_rejects", log_tx_rejects);
+    parent->recordScalar("log_tx_rejects", log_tx_rejects);
     parent->recordScalar("log_rx_success", log_rx_success);
-    parent->recordScalar("log_rx_success", log_tx_success);
+    parent->recordScalar("log_tx_success", log_tx_success);
     parent->recordScalar("log_rx_lost", log_rx_lost);
-    parent->recordScalar("log_rx_lost", log_tx_lost);
+    parent->recordScalar("log_tx_lost", log_tx_lost);
 
     // Delays
     if(db_delays.size()>0){
